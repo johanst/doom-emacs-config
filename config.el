@@ -77,3 +77,6 @@
 
 (after! evil-snipe
   (setq evil-snipe-scope 'visible))
+
+(after! evil-easymotion
+  (setq avy-all-windows t))
