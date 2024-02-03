@@ -80,3 +80,6 @@
 
 (after! evil-easymotion
   (setq avy-all-windows t))
+
+(after! org
+  (setq org-ellipsis " ▼"))
