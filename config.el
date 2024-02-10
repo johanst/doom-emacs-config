@@ -96,6 +96,8 @@
     nil))
 
 (defun johast-org-topic-filename-select (filename)
+  "Query user for a topic in org topic directory and return full path to
+   filename within that directory"
   (let ((topic-filename
          (concat (file-name-as-directory johast-org-topic-dir)
                  (file-name-as-directory (completing-read "Select topic: " (johast-org-topics-list)))
@@ -103,59 +105,83 @@
     topic-filename))
 
 (defun johast-org-topic-filename-select-todo ()
-  "blaj"
+  "Select org topic and return full path to its todo file"
   (johast-org-topic-filename-select "todo.org"))
+
+(defun johast-org-topic-filename-select-notes ()
+  "Select org topic and return full path to its notes file"
+  (johast-org-topic-filename-select "notes.org"))
+
+(defun johast-org-topic-filename-select-journal ()
+  "Select org topic and return full path to its journal file"
+  (johast-org-topic-filename-select "journal.org"))
 
 (defun johast-org-topics-dired ()
   (interactive)
   (dired johast-org-topic-dir))
 
-;; (after! org
-;;   (setq org-capture-templates
-;;         '(("t" "Personal todo" entry
-;;            (file+headline +org-capture-todo-file "Inbox")
-;;            "* [ ] %?\n%i\n%a" :prepend t)
-;;           ("n" "Personal notes" entry
-;;            (file+headline +org-capture-notes-file "Inbox")
-;;            "* %u %?\n%i\n%a" :prepend t)
-;;           ("j" "Journal" entry
-;;            (file+olp+datetree +org-capture-journal-file)
-;;            "* %U %?\n%i\n%a" :prepend t)
+(defun johast-topicdirp (dirname)
+  "Return t if parent directory is topic"
+  (string-equal
+   "topic"
+   (file-name-base
+    (directory-file-name (file-name-directory (expand-file-name dirname)))
+    )))
 
-;;           ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
-;;           ;; {todo,notes,changelog}.org file is found in a parent directory.
-;;           ;; Uses the basename from `+org-capture-todo-file',
-;;           ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
-;;           ("p" "Templates for projects")
-;;           ("pt" "Project-local todo" entry  ; {project-root}/todo.org
-;;            (file+headline johast-org-topic-filename-select-todo "Inbox")
-;;            "* TODO %?\n%i\n%a" :prepend t)
-;;           ("pn" "Project-local notes" entry  ; {project-root}/notes.org
-;;            (file+headline +org-capture-project-notes-file "Inbox")
-;;            "* %U %?\n%i\n%a" :prepend t)
-;;           ("pc" "Project-local changelog" entry  ; {project-root}/changelog.org
-;;            (file+headline +org-capture-project-changelog-file "Unreleased")
-;;            "* %U %?\n%i\n%a" :prepend t)
+(map!
+ :leader
+ :prefix "j"
+ :desc "Org topic dired" :n "t" #'johast-org-topics-dired)
 
-;;           ;; Will use {org-directory}/{+org-capture-projects-file} and store
-;;           ;; these under {ProjectName}/{Tasks,Notes,Changelog} headings. They
-;;           ;; support `:parents' to specify what headings to put them under, e.g.
-;;           ;; :parents ("Projects")
-;;           ("o" "Centralized templates for projects")
-;;           ("ot" "Project todo" entry
-;;            (function +org-capture-central-project-todo-file)
-;;            "* TODO %?\n %i\n %a"
-;;            :heading "Tasks"
-;;            :prepend nil)
-;;           ("on" "Project notes" entry
-;;            (function +org-capture-central-project-notes-file)
-;;            "* %U %?\n %i\n %a"
-;;            :heading "Notes"
-;;            :prepend t)
-;;           ("oc" "Project changelog" entry
-;;            (function +org-capture-central-project-changelog-file)
-;;            "* %U %?\n %i\n %a"
-;;            :heading "Changelog"
-;;            :prepend t))
-;;        )
-;;   )
+(after! org
+  ;; Based on doom default but with option to use centralized topic specific org
+  ;; files instead of project specific, which requires an asssociation with a
+  ;; git repo or some other projectile-way of identifying a project.
+  (setq
+   org-agenda-files
+   (cons "~/org/" (directory-files-recursively
+                   johast-org-topic-dir
+                   "\\.org$"
+                   t
+                   #'johast-topicdirp))
+
+   org-capture-templates
+   '(("t" "Personal todo" entry
+      (file+headline +org-capture-todo-file "Inbox")
+      "* TODO %?\n%i\n%a" :prepend t)
+     ("n" "Personal notes" entry
+      (file+headline +org-capture-notes-file "Inbox")
+      "* %u %?\n%i\n%a" :prepend t)
+     ("j" "Journal" entry
+      (file+olp+datetree +org-capture-journal-file)
+      "* %U %?\n%i\n%a" :prepend t)
+
+     ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
+     ;; {todo,notes,changelog}.org file is found in a parent directory.
+     ;; Uses the basename from `+org-capture-todo-file',
+     ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
+     ("p" "Templates for projects")
+     ("pt" "Project-local todo" entry  ; {project-root}/todo.org
+      (file+headline +org-capture-project-todo-file "Inbox")
+      "* TODO %?\n%i\n%a" :prepend t)
+     ("pn" "Project-local notes" entry  ; {project-root}/notes.org
+      (file+headline +org-capture-project-notes-file "Inbox")
+      "* %U %?\n%i\n%a" :prepend t)
+     ("pc" "Project-local changelog" entry  ; {project-root}/changelog.org
+      (file+headline +org-capture-project-changelog-file "Unreleased")
+      "* %U %?\n%i\n%a" :prepend t)
+
+     ;; Will use {org-directory}/topic/{topic-name}.
+     ("o" "Templates for specific topics")
+     ("ot" "Topic specific todo" entry
+      (file+headline johast-org-topic-filename-select-todo "Inbox")
+      "* TODO %?\n%i\n%a" :prepend t)
+     ("on" "Topic specific notes" entry
+      (file+headline johast-org-topic-filename-select-notes "Inbox")
+      "* %u %?\n%i\n%a" :prepend t)
+     ("oj" "Topic specific journal" entry
+      (file+olp+datetree johast-org-topic-filename-select-notes)
+      "* %U %?\n%i\n%a" :prepend t)
+     )
+   )
+  )
