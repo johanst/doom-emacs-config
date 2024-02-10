@@ -146,15 +146,18 @@
                    #'johast-topicdirp))
 
    org-capture-templates
-   '(("t" "Personal todo" entry
+   '(("t" "Todo" entry
       (file+headline +org-capture-todo-file "Inbox")
       "* TODO %?\n%i\n%a" :prepend t)
-     ("n" "Personal notes" entry
+     ("n" "Notes" entry
       (file+headline +org-capture-notes-file "Inbox")
       "* %u %?\n%i\n%a" :prepend t)
      ("j" "Journal" entry
       (file+olp+datetree +org-capture-journal-file)
       "* %U %?\n%i\n%a" :prepend t)
+     ("c" "Clipboard to Notes" entry
+      (file+headline +org-capture-notes-file "Inbox")
+      "* %u %?\n%x" :prepend t)
 
      ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
      ;; {todo,notes,changelog}.org file is found in a parent directory.
@@ -167,9 +170,12 @@
      ("pn" "Project-local notes" entry  ; {project-root}/notes.org
       (file+headline +org-capture-project-notes-file "Inbox")
       "* %U %?\n%i\n%a" :prepend t)
-     ("pc" "Project-local changelog" entry  ; {project-root}/changelog.org
+     ("pj" "Project-local changelog" entry  ; {project-root}/changelog.org
       (file+headline +org-capture-project-changelog-file "Unreleased")
       "* %U %?\n%i\n%a" :prepend t)
+     ("pc" "Project-local clipboard to notes" entry  ; {project-root}/notes.org
+      (file+headline +org-capture-project-notes-file "Inbox")
+      "* %U %?\n%x" :prepend t)
 
      ;; Will use {org-directory}/topic/{topic-name}.
      ("o" "Templates for specific topics")
@@ -182,6 +188,9 @@
      ("oj" "Topic specific journal" entry
       (file+olp+datetree johast-org-topic-filename-select-notes)
       "* %U %?\n%i\n%a" :prepend t)
+     ("oc" "Topic specific clipboard to notes" entry
+      (file+headline johast-org-topic-filename-select-notes "Inbox")
+      "* %u %?\n%x" :prepend t)
      )
    )
   )
