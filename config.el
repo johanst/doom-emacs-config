@@ -117,6 +117,8 @@
   (johast-org-topic-filename-select "journal.org"))
 
 (defun johast-org-topics-dired ()
+  "Open dired in org-directory/topic for quick add/remove of directories that
+   will correspond to topics "
   (interactive)
   (dired johast-org-topic-dir))
 
@@ -128,23 +130,28 @@
     (directory-file-name (file-name-directory (expand-file-name dirname)))
     )))
 
+(defun johast-org-topics-sync ()
+  "Update org-agenda-files to match contents of org-directory/topic"
+  (interactive)
+  (setq
+   org-agenda-files
+   (cons org-directory (directory-files-recursively
+                        johast-org-topic-dir
+                        "\\.org$"
+                        t
+                        #'johast-topicdirp))))
 (map!
  :leader
  :prefix "j"
- :desc "Org topic dired" :n "t" #'johast-org-topics-dired)
+ :desc "Org topic dired" :n "t" #'johast-org-topics-dired
+ :desc "Org topic sync" :n "T" #'johast-org-topics-sync)
 
 (after! org
+  (johast-org-topics-sync)
   ;; Based on doom default but with option to use centralized topic specific org
   ;; files instead of project specific, which requires an asssociation with a
   ;; git repo or some other projectile-way of identifying a project.
   (setq
-   org-agenda-files
-   (cons "~/org/" (directory-files-recursively
-                   johast-org-topic-dir
-                   "\\.org$"
-                   t
-                   #'johast-topicdirp))
-
    org-capture-templates
    '(("t" "Todo" entry
       (file+headline +org-capture-todo-file "Inbox")
