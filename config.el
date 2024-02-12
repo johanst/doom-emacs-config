@@ -205,7 +205,7 @@
       (file+headline johast-org-topic-filename-select-notes "Inbox")
       "* %u %?\n%x" :prepend t)
      ("oj" "Topic specific journal" entry
-      (file+olp+datetree johast-org-topic-filename-select-notes)
+      (file+olp+datetree johast-org-topic-filename-select-journal)
       "* %U %?\n%i\n%a" :prepend t)
      )
    )
