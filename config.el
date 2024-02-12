@@ -135,11 +135,15 @@
   (interactive)
   (setq
    org-agenda-files
-   (cons org-directory (directory-files-recursively
-                        johast-org-topic-dir
-                        "\\.org$"
-                        t
-                        #'johast-topicdirp))))
+   (cons org-directory
+         (when (file-exists-p johast-org-topic-dir)
+           (directory-files-recursively
+            johast-org-topic-dir
+            "\\.org$"
+            t
+            #'johast-topicdirp))))
+  (message "Synchronized topic dir '%s'" johast-org-topic-dir))
+
 (map!
  :leader
  :prefix "j"
