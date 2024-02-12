@@ -156,15 +156,18 @@
    '(("t" "Todo" entry
       (file+headline +org-capture-todo-file "Inbox")
       "* TODO %?\n%i\n%a" :prepend t)
+     ("T" "Todo +clipboard" entry
+      (file+headline +org-capture-todo-file "Inbox")
+      "* TODO %?\n%x" :prepend t)
      ("n" "Notes" entry
       (file+headline +org-capture-notes-file "Inbox")
       "* %u %?\n%i\n%a" :prepend t)
+     ("N" "Notes +clipboard" entry
+      (file+headline +org-capture-notes-file "Inbox")
+      "* %u %?\n%x" :prepend t)
      ("j" "Journal" entry
       (file+olp+datetree +org-capture-journal-file)
       "* %U %?\n%i\n%a" :prepend t)
-     ("c" "Clipboard to Notes" entry
-      (file+headline +org-capture-notes-file "Inbox")
-      "* %u %?\n%x" :prepend t)
 
      ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
      ;; {todo,notes,changelog}.org file is found in a parent directory.
@@ -174,30 +177,36 @@
      ("pt" "Project-local todo" entry  ; {project-root}/todo.org
       (file+headline +org-capture-project-todo-file "Inbox")
       "* TODO %?\n%i\n%a" :prepend t)
+     ("pT" "Project-local todo +clipboard" entry  ; {project-root}/todo.org
+      (file+headline +org-capture-project-todo-file "Inbox")
+      "* TODO %?\n%x" :prepend t)
      ("pn" "Project-local notes" entry  ; {project-root}/notes.org
       (file+headline +org-capture-project-notes-file "Inbox")
       "* %U %?\n%i\n%a" :prepend t)
-     ("pj" "Project-local changelog" entry  ; {project-root}/changelog.org
-      (file+headline +org-capture-project-changelog-file "Unreleased")
-      "* %U %?\n%i\n%a" :prepend t)
-     ("pc" "Project-local clipboard to notes" entry  ; {project-root}/notes.org
+     ("pN" "Project-local notes +clipboard" entry  ; {project-root}/notes.org
       (file+headline +org-capture-project-notes-file "Inbox")
       "* %U %?\n%x" :prepend t)
+     ("pc" "Project-local changelog" entry  ; {project-root}/changelog.org
+      (file+headline +org-capture-project-changelog-file "Unreleased")
+      "* %U %?\n%i\n%a" :prepend t)
 
      ;; Will use {org-directory}/topic/{topic-name}.
      ("o" "Templates for specific topics")
      ("ot" "Topic specific todo" entry
       (file+headline johast-org-topic-filename-select-todo "Inbox")
       "* TODO %?\n%i\n%a" :prepend t)
+     ("oT" "Topic specific todo" entry
+      (file+headline johast-org-topic-filename-select-todo "Inbox")
+      "* TODO %?\n%x" :prepend t)
      ("on" "Topic specific notes" entry
       (file+headline johast-org-topic-filename-select-notes "Inbox")
       "* %u %?\n%i\n%a" :prepend t)
+     ("oN" "Topic specific notes +clipboard" entry
+      (file+headline johast-org-topic-filename-select-notes "Inbox")
+      "* %u %?\n%x" :prepend t)
      ("oj" "Topic specific journal" entry
       (file+olp+datetree johast-org-topic-filename-select-notes)
       "* %U %?\n%i\n%a" :prepend t)
-     ("oc" "Topic specific clipboard to notes" entry
-      (file+headline johast-org-topic-filename-select-notes "Inbox")
-      "* %u %?\n%x" :prepend t)
      )
    )
   )
