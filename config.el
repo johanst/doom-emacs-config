@@ -148,7 +148,8 @@
  :leader
  :prefix "j"
  :desc "Org topic dired" :n "t" #'johast-org-topics-dired
- :desc "Org topic sync" :n "T" #'johast-org-topics-sync)
+ :desc "Org topic sync" :n "T" #'johast-org-topics-sync
+ :desc "Treemacs focus" :n "p" #'treemacs-select-window)
 
 (after! org
   (johast-org-topics-sync)
