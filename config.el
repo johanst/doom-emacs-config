@@ -152,6 +152,10 @@
  :desc "Treemacs focus" :n "p" #'treemacs-select-window)
 
 (after! org
+  ;; Org-cache seems to be messed up when treemacs is parsing the
+  ;; projects and workspaces
+  (setq org-element-use-cache nil)
+
   (johast-org-topics-sync)
   ;; Based on doom default but with option to use centralized topic specific org
   ;; files instead of project specific, which requires an asssociation with a
