@@ -144,13 +144,6 @@
             #'johast-topicdirp))))
   (message "Synchronized topic dir '%s'" johast-org-topic-dir))
 
-(map!
- :leader
- :prefix "j"
- :desc "Org topic dired" :n "t" #'johast-org-topics-dired
- :desc "Org topic sync" :n "T" #'johast-org-topics-sync
- :desc "Treemacs focus" :n "p" #'treemacs-select-window)
-
 (after! org
   ;; Org-cache seems to be messed up when treemacs is parsing the
   ;; projects and workspaces
@@ -219,3 +212,24 @@
      )
    )
   )
+
+(defun johast-treeemacs-toggle()
+  "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
+as we go. But for other workspaces we don't want to pollute the setup and there we require
+any project to be explicitly added to treemacs."
+  (interactive)
+  (if (string= "main" (+workspace-current-name))
+      (+treemacs/toggle)
+    (treemacs)))
+
+(map!
+ :leader
+ :prefix "j"
+ :desc "Org topic dired" :n "t" #'johast-org-topics-dired
+ :desc "Org topic sync" :n "T" #'johast-org-topics-sync
+ :desc "Treemacs focus" :n "p" #'treemacs-select-window)
+
+(map!
+ :leader
+ :prefix "o"
+ :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle)
