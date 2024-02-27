@@ -84,6 +84,9 @@
 (after! org
   (setq org-ellipsis " ▼"))
 
+(after! project
+  (setq project-vc-extra-root-markers '(".dir-locals.el")))
+
 (defvar johast-org-topic-dir
   (expand-file-name "topic" org-directory)
   "Directory for recording topic specific notes/todos/journal")
