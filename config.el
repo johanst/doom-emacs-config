@@ -216,6 +216,14 @@
    )
   )
 
+;; Configure LSP servers
+;; clangd
+;;   always allow a `.clangd` config file (why is this not default?)
+(after! eglot
+  (add-to-list 'eglot-server-programs
+               '((c-mode c-ts-mode c++-mode c++-ts-mode objc-mode) .
+                 ("clangd" "--enable-config"))))
+
 (defun johast-treeemacs-toggle()
   "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
 as we go. But for other workspaces we don't want to pollute the setup and there we require
