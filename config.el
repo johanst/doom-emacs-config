@@ -217,9 +217,11 @@
   )
 
 ;; Configure LSP servers
+;; disable inlay hints by default (keybinding for toggling it)
 ;; clangd
 ;;   always allow a `.clangd` config file (why is this not default?)
 (after! eglot
+  (add-hook 'eglot-managed-mode-hook (lambda () (eglot-inlay-hints-mode -1)))
   (add-to-list 'eglot-server-programs
                '((c-mode c-ts-mode c++-mode c++-ts-mode objc-mode) .
                  ("clangd" "--enable-config"))))
@@ -235,12 +237,11 @@ any project to be explicitly added to treemacs."
 
 (map!
  :leader
- :prefix "j"
- :desc "Org topic dired" :n "t" #'johast-org-topics-dired
- :desc "Org topic sync" :n "T" #'johast-org-topics-sync
- :desc "Treemacs focus" :n "p" #'treemacs-select-window)
-
-(map!
- :leader
- :prefix "o"
- :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle)
+ (:prefix "c"
+  :desc "Toggle inlay hints" :n "h" #'eglot-inlay-hints-mode)
+ (:prefix "j"
+  :desc "Org topic dired" :n "t" #'johast-org-topics-dired
+  :desc "Org topic sync" :n "T" #'johast-org-topics-sync
+  :desc "Treemacs focus" :n "p" #'treemacs-select-window)
+ (:prefix "o"
+  :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
