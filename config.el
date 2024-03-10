@@ -245,3 +245,9 @@ any project to be explicitly added to treemacs."
   :desc "Treemacs focus" :n "p" #'treemacs-select-window)
  (:prefix "o"
   :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
+
+(map!
+ :after cc-mode
+ :map (c-mode-map c++-mode-map)
+ (:prefix "C-c"
+  :desc "Find other file" "o" #'ff-find-other-file))
