@@ -247,7 +247,7 @@ any project to be explicitly added to treemacs."
   :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
 
 (map!
- :after projectile
+ :after cc-mode
  :map (c-mode-map c++-mode-map)
  (:prefix "C-c"
   :desc "Find other file" "o" #'projectile-find-other-file))
