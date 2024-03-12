@@ -235,6 +235,19 @@ any project to be explicitly added to treemacs."
       (+treemacs/toggle)
     (treemacs)))
 
+(defvar-local johast-compile-commands-alist nil
+  "An alist of compile-commands, key is for selection, value is the actual command")
+
+(defun johast-project-compile()
+  "Select a compile command, preferably set via dir-locals in project and then
+run `project-compile' with that command selected."
+  (interactive)
+  (when johast-compile-commands-alist
+    (let* ((key (completing-read "Select compile command: " johast-compile-commands-alist))
+           (cmd (cdr (assoc key johast-compile-commands-alist))))
+      (setq compile-command cmd))
+    (project-compile)))
+
 (map!
  :leader
  (:prefix "c"
