@@ -259,6 +259,10 @@ run `project-compile' with that command selected."
  (:prefix "o"
   :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
 
+(after! better-jumper
+  (global-set-key (kbd "<f3>") #'better-jumper-jump-backward)
+  (global-set-key (kbd "<f4>") #'better-jumper-jump-forward))
+
 (map!
  :after cc-mode
  :map (c-mode-map c++-mode-map)
