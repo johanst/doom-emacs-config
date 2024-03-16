@@ -259,9 +259,18 @@ run `project-compile' with that command selected."
  (:prefix "o"
   :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
 
+;; Alternative to Ctrl-I/Ctrl-O in terminal mode
+;; (Ctrl-I is indistinguashible from TAB)
 (after! better-jumper
   (global-set-key (kbd "<f3>") #'better-jumper-jump-backward)
   (global-set-key (kbd "<f4>") #'better-jumper-jump-forward))
+
+;; Alternative to C-; and C-c C-; in terminal mode
+(map!
+ "M-," #'embark-act
+ (:map minibuffer-local-map
+       "M-,"               #'embark-act
+       "C-c M-,"           #'embark-export))
 
 (map!
  :after cc-mode
