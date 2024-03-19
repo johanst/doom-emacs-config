@@ -253,6 +253,8 @@ run `project-compile' with that command selected."
  (:prefix "c"
   :desc "Toggle inlay hints" :n "h" #'eglot-inlay-hints-mode)
  (:prefix "j"
+  :desc "Project compile" :n "C" #'johast-project-compile
+  :desc "Project recompile" :n "c" #'project-recompile
   :desc "Org topic dired" :n "t" #'johast-org-topics-dired
   :desc "Org topic sync" :n "T" #'johast-org-topics-sync
   :desc "Treemacs focus" :n "p" #'treemacs-select-window)
