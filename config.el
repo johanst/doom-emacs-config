@@ -276,7 +276,8 @@ run `project-compile' with that command selected."
  "M-," #'embark-act
  (:map minibuffer-local-map
        "M-,"               #'embark-act
-       "C-c M-,"           #'embark-export))
+       "C-c M-,"           #'embark-export
+       "C-c C-p"           #'+pass/consult))
 
 (map!
  :after cc-mode
