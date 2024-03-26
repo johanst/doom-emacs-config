@@ -75,6 +75,8 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+(repeat-mode 1)
+
 (after! evil-snipe
   (setq evil-snipe-scope 'visible))
 
@@ -284,3 +286,14 @@ run `project-compile' with that command selected."
  :map (c-mode-map c++-mode-map)
  (:prefix "C-c"
   :desc "Find other file" "o" #'projectile-find-other-file))
+
+(map!
+ :after view
+ :map view-mode-map
+ ;; RET will sometimes not only scroll line forward. Occasionally it also jumps away
+ ;; when there is something at point. "t" is close to "y" so why not...
+ ;; TODO: keybinding for entering that saves evil state and buffer readable state
+ ;;       then enters emacs-keybinding-mode and sets file readonly.
+ ;;       installs a hook when exiting view mode to also restore evil state and
+ ;;       buffer readable state.
+ "t" #'View-scroll-line-forward)
