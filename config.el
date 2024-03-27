@@ -253,6 +253,24 @@ run `project-compile' with that command selected."
       (setq compile-command cmd))
     (project-compile)))
 
+;; That view-mode is even better than evil normal mode when we just want to
+;; read something. So let's make it convenient.
+
+(defvar johast-evil-mode-previous-state nil
+  "A variable that holds the evil-mode state that was used prior to entering
+ view-mode.")
+
+(defun johast-view-mode-save-restore-evil-state()
+  (if view-mode
+      (progn
+        (setq-local johast-evil-mode-previous-state evil-state)
+        (evil-emacs-state))
+    (when johast-evil-mode-previous-state
+    (setq-local evil-state johast-evil-mode-previous-state))))
+
+(after! view
+  (add-hook 'view-mode-hook #'johast-view-mode-save-restore-evil-state))
+
 (map!
  :leader
  (:prefix "c"
@@ -262,7 +280,8 @@ run `project-compile' with that command selected."
   :desc "Project recompile" :n "c" #'project-recompile
   :desc "Org topic dired" :n "t" #'johast-org-topics-dired
   :desc "Org topic sync" :n "T" #'johast-org-topics-sync
-  :desc "Treemacs focus" :n "p" #'treemacs-select-window)
+  :desc "Treemacs focus" :n "p" #'treemacs-select-window
+  :desc "View mode" :n "v" #'view-mode)
  (:prefix "o"
   :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
 
@@ -293,10 +312,9 @@ run `project-compile' with that command selected."
 (map!
  :after view
  :map view-mode-map
+ ;; j/k are unbound in view-mode so we can grab them for standard evil behaviour
+ "j" #'next-line
+ "k" #'previous-line
  ;; RET will sometimes not only scroll line forward. Occasionally it also jumps away
  ;; when there is something at point. "t" is close to "y" so why not...
- ;; TODO: keybinding for entering that saves evil state and buffer readable state
- ;;       then enters emacs-keybinding-mode and sets file readonly.
- ;;       installs a hook when exiting view mode to also restore evil state and
- ;;       buffer readable state.
  "t" #'View-scroll-line-forward)
