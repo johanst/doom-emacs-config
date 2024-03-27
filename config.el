@@ -75,6 +75,9 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+(setq doom-leader-alt-key "M-j")
+(setq doom-localleader-alt-key "M-j m")
+
 (repeat-mode 1)
 
 (after! evil-snipe
