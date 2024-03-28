@@ -289,9 +289,6 @@ run `project-compile' with that command selected."
 ;; (Ctrl-I is indistinguashible from TAB)
 (global-set-key (kbd "<f3>") #'better-jumper-jump-backward)
 (global-set-key (kbd "<f4>") #'better-jumper-jump-forward)
-;; and then why not some buffer navigation
-(global-set-key (kbd "<C-f3>") #'previous-buffer)
-(global-set-key (kbd "<C-f4>") #'next-buffer)
 ;; let's add workspaces for now (beware of M-f4 on Windows though)
 (global-set-key (kbd "<M-f3>") #'+workspace/cycle)
 
