@@ -35,14 +35,38 @@ specific keys. nil means every key is accepted."
             (push (concat key "=" value) env)))))
     env))
 
-(message "%s" (env-get-process-environment-from-alist
+(defun env-plist-from-alist(alist &optional include-keys)
+  "Given an alist with KEY/VALUE elements, produce a plist like
+(:KEY1 \"value\" :KEY2 \"value2\"). It happens to be just what eglot and
+dape wants for use in its jsonrpc requests.
+
+'include-keys' is a list of strings that specifies which keys
+from the alist that should be used. may be used to filter only
+specific keys. nil means every key is accepted."
+  (interactive "xgimme an alist: ")
+  (let ((plist '()))
+    (dolist (item alist)
+      (let ((key (car item))
+            (value (cdr item)))
+        (when (or (not include-keys) (member key include-keys))
+          (setq plist (append plist `(,(intern (concat ":" key)) value))))))
+    plist))
+
+(env-plist-from-alist
                '(("WSLENV" . "apa")
                  ("EDITOR" . "emacs")
                  ("TMUX_PANE" . "jupp")
                  )
                '("WSLENV" "EDITOR")
                )
-         )
+
+(env-get-process-environment-from-alist
+               '(("WSLENV" . "apa")
+                 ("EDITOR" . "emacs")
+                 ("TMUX_PANE" . "jupp")
+                 )
+               '("WSLENV" "EDITOR")
+               )
 
 (setq my-list (cl-remove-if (lambda (x) (and (stringp x) (string-prefix-p prefix-to-remove x))) my-list))
 (message "%s" (env-get-process-environment-from-alist '((2 . 3))))
