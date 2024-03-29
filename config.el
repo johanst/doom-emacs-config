@@ -315,3 +315,21 @@ run `project-compile' with that command selected."
  ;; RET will sometimes not only scroll line forward. Occasionally it also jumps away
  ;; when there is something at point. "t" is close to "y" so why not...
  "t" #'View-scroll-line-forward)
+
+;; C-x <up>/<down> seems to be unassigned so we can use it as a general
+;; back/forward within a specific mode (like info).
+;; Apparently doom, evil or something has messed up info-mode so that
+;; ctrl-i/ctrl-o is not symmetrical, and again ctrl-i is not terminal friendly
+;; anyway
+(map!
+ :after info
+ :map Info-mode-map
+ "C-x <up>" #'Info-history-back
+ "C-x <down>" #'Info-history-forward)
+
+(defvar-keymap johast-info-repeat-map
+  :doc "Keymap to repeat `Info-history-back' and `Info-history-forward'.
+Used in `repeat-mode'."
+  :repeat t
+  "<up>" #'Info-history-back
+  "<down>" #'Info-history-forward)
