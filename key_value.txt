@@ -1,0 +1,4 @@
+knas=hej
+gurka=hoppla
+asfalt
+klubba="urban"
