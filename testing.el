@@ -47,10 +47,18 @@ specific keys. nil means every key is accepted."
   (let ((plist '()))
     (dolist (item alist)
       (let ((key (car item))
-            (value (cdr item)))
+            (val (cdr item)))
         (when (or (not include-keys) (member key include-keys))
-          (setq plist (append plist `(,(intern (concat ":" key)) value))))))
+          (setq plist (append plist (list (intern (concat ":" key)) val))))))
     plist))
+
+
+(dolist (item alist)
+      (let ((key (car item))
+            (val (cdr item)))
+        (when t
+          (setq knas )
+          (setq gurka val))))))
 
 (env-plist-from-alist
                '(("WSLENV" . "apa")
@@ -68,6 +76,28 @@ specific keys. nil means every key is accepted."
                '("WSLENV" "EDITOR")
                )
 
+(setq test-plist '(:key1 "v1" :key2 "v2"))
+(setq mykey :key1)
+(plist-get test-plist mykey)
+
+     (setq njatt
+      '(("RUSTFLAGS" . "--target aarch64-unknown-linux-gnu"))
+      )
+
+      (setq-local
+        njett
+        `(:native
+          ,(env-plist-from-alist njatt)
+          )
+        )
+;; global johast-eglot-config
+;; :rust-build-env alist/env-file ( native or rustic build +  )
+;;    :build-env for eglot (architecture, path to cargo etc.)
+;; :rust-run-env (native rustic test + run )
+;; :debug-env (native or cross)
+;;   rustic-cargo-bin
+;;   rustic-cargo-build-exec-command
+;;   rustic-cargo-build-arguments
 (setq my-list (cl-remove-if (lambda (x) (and (stringp x) (string-prefix-p prefix-to-remove x))) my-list))
 (message "%s" (env-get-process-environment-from-alist '((2 . 3))))
 (message "%s" (env-alist-from-key-value-file "key_value.txt"))
