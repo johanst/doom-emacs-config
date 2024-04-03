@@ -75,7 +75,7 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-(add-to-list 'load-path (concat (file-name-directory buffer-file-name) "my-config"))
+(add-load-path! "my-config")
 (require 'my-utils)
 
 (require 'inheritenv)
