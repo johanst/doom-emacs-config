@@ -79,6 +79,7 @@ specific keys. nil means every key is accepted."
 (setq test-plist '(:key1 "v1" :key2 "v2"))
 (setq mykey :key1)
 (plist-get test-plist mykey)
+(setq knas '("KWHCALC_BUILD_ENV" . "NATIVE"))
 
      (setq njatt
       '(("RUSTFLAGS" . "--target aarch64-unknown-linux-gnu"))
@@ -98,6 +99,15 @@ specific keys. nil means every key is accepted."
 ;;   rustic-cargo-bin
 ;;   rustic-cargo-build-exec-command
 ;;   rustic-cargo-build-arguments
+;;
+;; rustic run-command (that always need native run + build env):
+;;   rustic-cargo-test-run
+;;   rustic-cargo-run-test
+;;   rustic-cargo-run
+;; rustic build-command (that only builds so should use native|target buildenv)
+;; all ends in rustic-compilation-start...
+;;
+;; apparently we need inheritenv from envrc
 (setq my-list (cl-remove-if (lambda (x) (and (stringp x) (string-prefix-p prefix-to-remove x))) my-list))
 (message "%s" (env-get-process-environment-from-alist '((2 . 3))))
 (message "%s" (env-alist-from-key-value-file "key_value.txt"))

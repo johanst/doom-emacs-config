@@ -78,6 +78,8 @@
 (add-to-list 'load-path (concat (file-name-directory buffer-file-name) "my-config"))
 (require 'my-utils)
 
+(require 'inheritenv)
+
 (setq doom-leader-alt-key "M-j")
 (setq doom-localleader-alt-key "M-j m")
 
