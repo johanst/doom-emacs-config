@@ -91,6 +91,10 @@
 (after! evil-easymotion
   (setq avy-all-windows t))
 
+(after! apheleia
+  ;; Use shfmt as default formatter for sh-mode as well (apheleia only defines bash-ts-mode)
+  (setq apheleia-mode-alist (cons '(sh-mode . shfmt) apheleia-mode-alist)))
+
 (after! org
   (setq org-ellipsis " ▼"))
 
