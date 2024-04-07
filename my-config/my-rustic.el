@@ -1,4 +1,5 @@
 ;;; my-config/my-rustic.el -*- lexical-binding: t; -*-
+(require 'my-utils)
 
 (defvar my-rustic-env-native-build '()
   "alist of ENV_VAR_NAME/VALUE pairs that will be applied to process
@@ -35,6 +36,12 @@ application or test, e.g. \"LD_LIBRARY_PATH\"")
   build/run settings of that particular project."
  )
 
+(defvar my-rustic-compile-env nil
+  "The environment that will be applied before running rustic-compilation-start,
+i.e. what rustic-recompile will apply before running a compile with 'rustic-compile-command'.
+Thus, all rustic build  commands that trigger rustic-compilation-start will need
+to set this variable.")
+
 (defun my-rustic-env-reset()
   "Reset all \"my-rustic-env-*\" variables."
   (interactive)
@@ -56,3 +63,59 @@ application or test, e.g. \"LD_LIBRARY_PATH\"")
           (setq my-rustic-env-target-build (plist-get cfg :env-target-build)))
     (when (plist-member cfg :env-native-run)
           (setq my-rustic-env-native-run (plist-get cfg :env-native-run)))))
+
+(defun my-rustic-store-native-env()
+  "Store the currently selected native build environment for rustic compiling."
+  (setq-local my-rustic-compile-env
+              (env-get-process-environment-from-alist my-rustic-env-native-build)))
+
+(defun my-rustic-advice-store-native-env(func &rest args)
+  "Adapter for calling `my-rustic-store-native-env' as :around advice.
+The call is made before calling FUNC(ARGS)."
+  (my-rustic-store-native-env)
+  (apply func args))
+;; advice cargo-run-command
+
+(defun my-rustic-advice-activate-native-build-run-env(func &rest args)
+  "Apply the currently selected rust native environment before running FUNC(ARGS).
+The environment is combined from both build and run environemnt which makes
+this advice suitable for applying before something is both built and run."
+  (let* ((build-run-env-alist (append my-rustic-env-native-run my-rustic-env-native-build))
+         (process-environment
+          (env-get-process-environment-from-alist build-run-env-alist)))
+    (apply func args)))
+;; test/run
+
+(defun my-rustic-store-target-env()
+  "Store the currently selected target build environment for rustic compiling."
+  (setq-local my-rustic-compile-env
+              (env-get-process-environment-from-alist my-rustic-env-target-build)))
+
+(defun my-rustic-advice-activate-stored-env(func &rest args)
+  "Active the previously stored process environment.
+Any function that starts a compile command that triggers
+`rustic-compilation-start' should store its environment so it is
+picked up by this function which sets the process environment
+before running `rustic-compilation-start'. This also makes rustic-recompile work
+correctly.
+FUNC(ARGS) should be `rustic-compilation-start' called with ARGS."
+  (let ((process-environment my-rustic-compile-env))
+    (apply func args)))
+
+(after! rustic
+  (advice-add #'rustic-run-cargo-command :around #'my-rustic-config-build-target-apply))
+;; advice build
+;; (rustic-run-cargo-command)
+
+(defun knas()
+  (interactive)
+  (message "knase"))
+
+(map!
+ :after rustic
+ :map rustic-mode-map
+ (:prefix "C-c t"
+  :desc "Build for target" "b" #'knas
+  :desc "Build for target" "b" #'knas))
+
+(provide 'my-rustic)
