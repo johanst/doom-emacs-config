@@ -36,6 +36,9 @@ application or test, e.g. \"LD_LIBRARY_PATH\"")
   build/run settings of that particular project."
  )
 
+(defvar my-rustic-selected-config nil
+  "Current selected config.")
+
 (defvar my-rustic-compile-env nil
   "The environment that will be applied before running rustic-compilation-start,
 i.e. what rustic-recompile will apply before running a compile with 'rustic-compile-command'.
@@ -51,12 +54,13 @@ to set this variable.")
    my-rustic-env-native-run '()))
 
 (defun my-rustic-select-config(&optional cfg-name)
-  "blaj"
+  "Select a config given by CFG-NAME.
+Must be something from `my-rustic-configs'"
   (interactive)
   (let* ((cfg-name (or cfg-name
                        (completing-read "Select Rust config: " (mapcar 'car my-rustic-configs))))
          (cfg (cdr (assoc-string cfg-name my-rustic-configs))))
-    (message "%s" cfg)
+    (setq-default my-rustic-selected-config cfg-name)
     (when (plist-member cfg :env-native-build)
           (setq my-rustic-env-native-build (plist-get cfg :env-native-build)))
     (when (plist-member cfg :env-target-build)
@@ -83,6 +87,7 @@ this advice suitable for applying before something is both built and run."
   (let* ((build-run-env-alist (append my-rustic-env-native-run my-rustic-env-native-build))
          (process-environment
           (env-get-process-environment-from-alist build-run-env-alist)))
+    ;; (message "%s" process-environment)
     (apply func args)))
 ;; test/run
 
@@ -103,13 +108,18 @@ FUNC(ARGS) should be `rustic-compilation-start' called with ARGS."
     (apply func args)))
 
 (after! rustic
-  (advice-add #'rustic-run-cargo-command :around #'my-rustic-config-build-target-apply))
-;; advice build
-;; (rustic-run-cargo-command)
-
-(defun knas()
-  (interactive)
-  (message "knase"))
+  ;; cargo build, check, clippy, add, etc.
+  (advice-add #'rustic-run-cargo-command :around #'my-rustic-advice-store-native-env)
+  ;; recompile after rustic-run-cargo-command
+  (advice-add #'rustic-compilation-start :around #'my-rustic-advice-activate-stored-env)
+  ;;
+  ;; cargo run +rerun
+  (advice-add #'rustic-cargo-run-command :around #'my-rustic-advice-activate-native-build-run-env)
+  ;;
+  ;; cargo test <test-at-point>
+  (advice-add #'rustic-cargo-current-test :around #'my-rustic-advice-activate-native-build-run-env)
+  ;; cargo test +rerun
+  (advice-add #'rustic-cargo-test-run :around #'my-rustic-advice-activate-native-build-run-env))
 
 (map!
  :after rustic
