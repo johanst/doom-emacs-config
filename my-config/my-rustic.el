@@ -126,6 +126,27 @@ FUNC(ARGS) should be `rustic-compilation-start' called with ARGS."
   ;; cargo test +rerun
   (advice-add #'rustic-cargo-test-run :around #'my-rustic-advice-activate-native-build-run-env))
 
+(defvar-local my-rustic-compile-commands-alist nil
+  "An alist of compile-commands.
+compile-commands is form (
+  (\"cmd\" . (:config \"config\" :command \"cargo build....\"))...
+)
+
+where \"cmd\" is the identifier of this compile command,
+':config' is an optional plist entry that identifies the rustic config to use if
+ any (must match an entry in 'my-rustic-configs'
+':command' is the actual cargo command to run")
+
+(defun my-rustic-compile()
+  "Select a cargo compile command, preferably set via dir-locals in project and then
+run `rustic-compile' with that command selected."
+  (interactive)
+  (when my-rustic-compile-commands-alist
+    (let* ((key (completing-read "Select compile command: " my-rustic-compile-commands-alist))
+           (cmd (cdr (assoc key my-rustic-compile-commands-alist))))
+      (setq compile-command cmd))
+    (rustic-compile)))
+
 (map!
  :after rustic
  :map rustic-mode-map
