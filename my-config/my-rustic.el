@@ -70,7 +70,7 @@ Must be something from `my-rustic-configs'"
 
 (defun my-rustic-store-native-env()
   "Store the currently selected native build environment for rustic compiling."
-  (setq-local my-rustic-compile-env
+  (setq my-rustic-compile-env
               (env-get-process-environment-from-alist my-rustic-env-native-build)))
 
 (defun my-rustic-advice-store-native-env(func &rest args)
@@ -93,7 +93,7 @@ this advice suitable for applying before something is both built and run."
 
 (defun my-rustic-store-target-env()
   "Store the currently selected target build environment for rustic compiling."
-  (setq-local my-rustic-compile-env
+  (setq my-rustic-compile-env
               (env-get-process-environment-from-alist my-rustic-env-target-build)))
 
 (defun my-rustic-advice-activate-stored-env(func &rest args)
@@ -108,6 +108,11 @@ FUNC(ARGS) should be `rustic-compilation-start' called with ARGS."
     (apply func args)))
 
 (after! rustic
+  ;; N.B. we cannot get this builtin convenience commands to build for any specific
+  ;; target because we cannot just inject '--target=...' without destroying the
+  ;; possibility to apply custom compile commands.
+  ;; So therefore we just let these commands handle the native case.
+
   ;; cargo build, check, clippy, add, etc.
   (advice-add #'rustic-run-cargo-command :around #'my-rustic-advice-store-native-env)
   ;; recompile after rustic-run-cargo-command
