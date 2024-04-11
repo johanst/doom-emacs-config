@@ -50,3 +50,5 @@
 ;; (unpin! t)
 
 (package! inheritenv) ;; for rustic-compilation-start env propagation
+
+(package! dape)
