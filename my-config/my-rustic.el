@@ -154,30 +154,4 @@ run `rustic-compile' with that command selected."
   :desc "Build for target" "b" #'knas
   :desc "Build for target" "b" #'knas))
 
-;; copy/paste from gdb config
-(after! dape
-  (push
-   '(rust-gdb
-     ensure (lambda (config)
-              (dape-ensure-command config)
-              (let* ((default-directory
-                      (or (dape-config-get config 'command-cwd)
-                          default-directory))
-                     (output (shell-command-to-string "rust-gdb --version"))
-                     (version (save-match-data
-                                (when (string-match "GNU gdb \\(?:(.*) \\)?\\([0-9.]+\\)" output)
-                                  (string-to-number (match-string 1 output))))))
-                (unless (>= version 14.1)
-                  (user-error "Requires gdb version >= 14.1"))))
-     modes (rustic-mode)
-     command-cwd dape-command-cwd
-     command "rust-gdb"
-     command-args ("--interpreter=dap")
-     :request "launch"
-     :program "a.out"
-     :args []
-     :stopAtBeginningOfMainSubprogram t)
-   dape-configs
-   ))
-
 (provide 'my-rustic)
