@@ -263,6 +263,18 @@ run `project-compile' with that command selected."
       (setq compile-command cmd))
     (project-compile)))
 
+(defvar-local my-dape-commands-alist nil
+  "An alist of dape-commands, key is for selection, value is the actual command")
+
+(defun my-dape-command-select()
+  "Select a dape-command, preferably set via dir-locals in project. This command
+will be used when running `dape' later on."
+  (interactive)
+  (when my-dape-commands-alist
+    (let* ((key (completing-read "Select dape command: " my-dape-commands-alist))
+           (cmd (cdr (assoc key my-dape-commands-alist))))
+      (setq dape-command cmd))))
+
 ;; That view-mode is even better than evil normal mode when we just want to
 ;; read something. So let's make it convenient.
 
@@ -288,6 +300,8 @@ run `project-compile' with that command selected."
  (:prefix "j"
   :desc "Project compile" :n "C" #'johast-project-compile
   :desc "Project recompile" :n "c" #'project-recompile
+  :desc "Select dape command" :n "D" #'my-dape-command-select
+  :desc "Dape" :n "d" #'dape
   :desc "Org topic dired" :n "t" #'johast-org-topics-dired
   :desc "Org topic sync" :n "T" #'johast-org-topics-sync
   :desc "Treemacs focus" :n "p" #'treemacs-select-window
