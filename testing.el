@@ -148,15 +148,36 @@ specific keys. nil means every key is accepted."
    (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
   (when (featurep 'vimish-fold)
     (vimish-fold-unfold-all))
-  (when (+fold--ts-fold-p)
-    (ts-fold-open-all))
+  (if (+fold--ts-fold-p)
+      (ts-fold-open-all)
+    (save-excursion
+      (+fold--ensure-hideshow-mode)
+      (if (integerp level)
+          (progn
+            (outline-hide-sublevels (max 1 (1- level)))
+            (hs-life-goes-on
+             (hs-hide-level-recursive (1- level) (point-min) (point-max))))
+        (hs-show-all)
+        (when (fboundp 'outline-show-all)
+          (outline-show-all))))))
+
+;;;###autoload
+(defun +fold/close-all (&optional level)
+  "Close folds at LEVEL (or all folds if LEVEL is nil)."
+  (interactive
+   (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
+  (when (featurep 'vimish-fold)
+    (vimish-fold-refold-all))
   (save-excursion
-    (+fold--ensure-hideshow-mode)
-    (if (integerp level)
-        (progn
-          (outline-hide-sublevels (max 1 (1- level)))
-          (hs-life-goes-on
-           (hs-hide-level-recursive (1- level) (point-min) (point-max))))
-      (hs-show-all)
-      (when (fboundp 'outline-show-all)
-        (outline-show-all)))))
+    (if (+fold--ts-fold-p)
+        (ts-fold-close-all)
+      (progn
+        (+fold--ensure-hideshow-mode)
+        (hs-life-goes-on
+         (if (integerp level)
+             (progn
+               (outline--show-headings-up-to-level (1+ level))
+               (hs-hide-level-recursive (1- level) (point-min) (point-max)))
+           (hs-hide-all)
+           (when (fboundp 'outline-hide-sublevels)
+             (outline-show-only-headings))))))))
