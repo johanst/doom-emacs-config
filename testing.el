@@ -181,3 +181,32 @@ specific keys. nil means every key is accepted."
            (hs-hide-all)
            (when (fboundp 'outline-hide-sublevels)
              (outline-show-only-headings))))))))
+
+
+;; https://www.reddit.com/r/emacs/comments/12g30nz/keybindings_for_info_when_using_evil/
+(defun ev/evil-collection-visit-file (&optional mode)
+    "Visit the `evil-collection' source file corresponding to
+  the current major mode, or to MODE if specified, in a new
+  window."
+    (interactive)
+    (let* ((mode (or mode (format "%s" major-mode)))
+           (base-path (concat (file-name-directory (find-library-name "evil-collection")) "modes/"))
+           (short (replace-regexp-in-string "-.+$" "" mode))
+           (file-list (directory-files-recursively base-path (format ".*%s.*\\.el$" short)))
+           (choice (cond ((= (length file-list) 1)
+                          (car file-list))
+                         ((> (length file-list) 1)
+                          (completing-read "Multiple evil-collection files found. Visit: " file-list nil t))
+                         (t
+                          (user-error "No evil-collection file found for %s" (format "%s" mode))))))
+
+        (select-window (display-buffer (find-file-noselect choice)
+                                       '(display-buffer-at-bottom . ())))
+      (let ((scroll-preserve-screen-position t)
+            (cur-line (line-number-at-pos))
+            (start (line-number-at-pos (window-start))))
+
+        (beginning-of-buffer)
+        (re-search-forward "(evil-collection-define-key")
+        (beginning-of-line)
+        (scroll-up (- cur-line start)))))
