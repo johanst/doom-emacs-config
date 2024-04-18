@@ -88,6 +88,10 @@
 
 (repeat-mode 1)
 
+(after! cc-mode
+  ;; tree-sitter-mode will provide text objects like loop, function call, etc.
+  (add-hook 'c-mode-common-hook #'tree-sitter-mode))
+
 (after! evil-snipe
   (setq evil-snipe-scope 'visible))
 

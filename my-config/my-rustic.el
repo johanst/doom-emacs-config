@@ -147,6 +147,10 @@ run `rustic-compile' with that command selected."
       (setq compile-command cmd))
     (rustic-compile)))
 
+(after! rustic
+  ;; tree-sitter-mode will provide text objects like loop, function call, etc.
+  (add-hook 'rustic-mode-hook #'tree-sitter-mode))
+
 (map!
  :after rustic
  :map rustic-mode-map
