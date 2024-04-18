@@ -84,6 +84,8 @@
 (setq doom-leader-alt-key "M-j")
 (setq doom-localleader-alt-key "M-j m")
 
+(setq git-commit-summary-max-length 60)
+
 (repeat-mode 1)
 
 (after! evil-snipe
