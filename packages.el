@@ -52,3 +52,4 @@
 (package! inheritenv) ;; for rustic-compilation-start env propagation
 
 (package! dape)
+(package! meson-mode)
