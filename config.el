@@ -290,7 +290,7 @@ See `my-dape-configs-alist'.")
   "Select a dape-config, preferably set via dir-locals in project, and then
 run `my-dape-run'."
   (interactive)
-  (when my-dape-configs-alist
+  (if my-dape-configs-alist
     (let* ((key (completing-read "Select dape command: " my-dape-configs-alist))
            (cfg (cdr (assoc key my-dape-configs-alist)))
            (build-env (and
@@ -299,7 +299,9 @@ run `my-dape-run'."
            (cmd (plist-get cfg :config)))
       (setq
        my-dape-build-env-alist build-env
-       my-dape-config cmd))))
+       my-dape-config cmd)
+      (my-dape-run))
+    (message "No dape config available")))
 
 (defun my-dape-run()
   "Run dape with environment and config set by
