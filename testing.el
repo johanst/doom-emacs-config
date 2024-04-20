@@ -211,11 +211,30 @@ specific keys. nil means every key is accepted."
         (beginning-of-line)
         (scroll-up (- cur-line start)))))
 
+(defun my-dape-process-output-buffer-name()
+  "hej"
+  (concat "*dape process output"
+         (if (project-current) (concat " <" (project-name (project-current)) ">") "") "*"))
+
+(defun my-dape-get-process-output-buffer()
+  "hopp"
+  (with-current-buffer
+      (get-buffer-create (my-dape-process-output-buffer-name))
+    ;; stolen without shame from compile.el.gz
+    (let ((comp-proc (get-buffer-process (current-buffer))))
+      (when comp-proc
+        (condition-case ()
+            (progn
+              (interrupt-process comp-proc)
+              (sit-for 1)
+              (delete-process comp-proc))
+          (error nil))))
+    (current-buffer)))
 
 (defun my-open-logfile-terminal ()
   "Open a read-only terminal in Emacs showing the output of a logfile using tail -f."
   (interactive)
-  (let* ((buffer (generate-new-buffer "Logfile Terminal"))
+  (let* ((buffer (my-dape-get-process-output-buffer))
          (win))
     (with-current-buffer buffer
       (comint-mode)
@@ -236,6 +255,8 @@ specific keys. nil means every key is accepted."
       ;;                (redisplay t)))
       ;; (redisplay t)
       )))
+
+
 
 (generate-new-buffer-name "hej")
 (display-buffer-in-side-window )
