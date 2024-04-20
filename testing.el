@@ -210,3 +210,33 @@ specific keys. nil means every key is accepted."
         (re-search-forward "(evil-collection-define-key")
         (beginning-of-line)
         (scroll-up (- cur-line start)))))
+
+
+(defun my-open-logfile-terminal ()
+  "Open a read-only terminal in Emacs showing the output of a logfile using tail -f."
+  (interactive)
+  (let* ((buffer (generate-new-buffer "Logfile Terminal"))
+         (win))
+    (with-current-buffer buffer
+      (comint-mode)
+      (insert "some text has to be inserted to make the window display something\n")
+      ;; (evil-force-normal-state)
+      (setq win (display-buffer buffer '(display-buffer-use-some-window (inhibit-same-window . t))))
+      ;; enable scroll
+      (setq-local window-point-insertion-type t)
+      ;; (set-window-start win (point-max))
+      ;; (setq-local evil-default-state 'normal)
+      ;; (goto-char (point-max))
+      (goto-char (point-max))
+      (start-process-shell-command "knas" (current-buffer) "/home/johast/hacking/slask/number.sh\n")
+      ;; (sit-for 1)
+      ;; (run-at-time 0.1 nil
+      ;;              (lambda ()
+      ;;                (goto-char (point-max))
+      ;;                (redisplay t)))
+      ;; (redisplay t)
+      )))
+
+(generate-new-buffer-name "hej")
+(display-buffer-in-side-window )
+(display-buffer-in-side-window (generate-new-buffer "hej") '((side . right)))
