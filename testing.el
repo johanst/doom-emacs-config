@@ -247,7 +247,11 @@ specific keys. nil means every key is accepted."
       ;; (setq-local evil-default-state 'normal)
       ;; (goto-char (point-max))
       (goto-char (point-max))
-      (start-process-shell-command "knas" (current-buffer) "/home/johast/hacking/slask/number.sh\n")
+      ;; (start-process-shell-command "knas" (current-buffer) "/home/johast/hacking/slask/number.sh\n")
+      (start-process-shell-command
+       "knas"
+       (current-buffer)
+       "ssh johan@192.168.2.141 gdbserver :1234 /home/johan/.local/bin/kwhcalc_debug\n")
       ;; (sit-for 1)
       ;; (run-at-time 0.1 nil
       ;;              (lambda ()
@@ -261,3 +265,27 @@ specific keys. nil means every key is accepted."
 (generate-new-buffer-name "hej")
 (display-buffer-in-side-window )
 (display-buffer-in-side-window (generate-new-buffer "hej") '((side . right)))
+
+;; gdb-mi
+
+(defvar hack-gdb-mi t)
+
+(defun my-gdb-inferior-io-mode-hook ()
+  "Hook func"
+  (when hack-gdb-mi
+      (start-process-shell-command
+       "knas"
+       (current-buffer)
+       "gdbserver :1234 /home/johast/hacking/cpptest/build/dbgtest\n")))
+
+(add-hook 'gdb-inferior-io-mode-hook #'my-gdb-inferior-io-mode-hook)
+(remove-hook 'gdb-inferior-io-mode-hook #'my-gdb-inferior-io-mode-hook)
+
+(defun my-gdb-inferior-io--init-proc-advice(func &rest args)
+  "Adapter for maybe calling `my-gdb-inferior-io--init-proc-advice' as :around advice."
+  (when (not hack-gdb-mi)
+    (apply func args)))
+
+(advice-add #'gdb-inferior-io--init-proc :around #'my-gdb-inferior-io--init-proc-advice)
+
+(gdb "gdb -i=mi ~/hacking/cpptest/build/dbgtest -ex \"target remote localhost:1234\"")
