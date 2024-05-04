@@ -268,6 +268,10 @@ specific keys. nil means every key is accepted."
 
 ;; gdb-mi
 
+(setq gdb-many-windows t)
+(setq gdb-restore-window-configuration-after-quit t)
+(setq gdb-debuginfod-enable-setting t)
+
 (defvar hack-gdb-mi t)
 
 (defun my-gdb-inferior-io-mode-hook ()
@@ -289,3 +293,57 @@ specific keys. nil means every key is accepted."
 (advice-add #'gdb-inferior-io--init-proc :around #'my-gdb-inferior-io--init-proc-advice)
 
 (gdb "gdb -i=mi ~/hacking/cpptest/build/dbgtest -ex \"target remote localhost:1234\"")
+
+(defun my-gdb-restart()
+  "Restart current gdb remote session"
+  (interactive)
+  ;; interrupt gdb if running
+  (when gud-running
+    (with-current-buffer gud-comint-buffer
+      (comint-interrupt-subjob)))
+  ;; make sure debugged program terminates
+  (gdb-io-quit)
+  ;; detach from existing process
+  (gud-basic-call "detach")
+  ;; retrigger hook to start gdbserver
+  (with-current-buffer (gdb-get-buffer 'gdb-inferior-io)
+    (gdb-inferior-io-mode))
+  ;; reattach from existing process
+  (gud-basic-call "target remote localhost:1234"))
+
+;; interrupt gdb if running
+(when gdb-running
+  (with-current-buffer gud-comint-buffer
+    (comint-interrupt-subjob)))
+
+;; make sure debugged program is quit
+(when-let* ((buf (gdb-get-buffer 'gdb-inferior-io))
+            (proc (get-buffer-process buf)))
+  (gdb-io-quit))
+
+;; detach from existing process
+(gud-basic-call "detach")
+
+;; retrigger hook to start gdbserver
+(with-current-buffer (gdb-get-buffer 'gdb-inferior-io)
+  (gdb-inferior-io-mode))
+
+;; reattach from existing process
+(gud-basic-call "target remote localhost:1234")
+
+  (message "hej %s" (process-status proc)))
+
+(gud-basic-call "detach")
+(defun test-get-proc ()
+  (interactive)
+(when-let* ((buf (gdb-get-buffer 'gdb-inferior-io))
+            (proc (get-buffer-process buf)))
+  (message "hej %s" (process-status proc))
+))
+
+(defun my-gdb-exit-hook()
+  (message "exiting gdb"))
+
+(advice-add 'gdb-reset :after 'my-gdb-exit-hook)
+
+;; gud-comint-buffer))

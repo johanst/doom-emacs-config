@@ -81,6 +81,8 @@
 (require 'inheritenv)
 (require 'my-rustic)
 
+(require 'my-gdb)
+
 (setq doom-leader-alt-key "M-j")
 (setq doom-localleader-alt-key "M-j m")
 
