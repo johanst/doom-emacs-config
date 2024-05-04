@@ -1,4 +1,5 @@
 ;;; my-config/my-rustic.el -*- lexical-binding: t; -*-
+(require 'rustic)
 (require 'my-utils)
 
 (defvar my-rustic-env-native-build '()
