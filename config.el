@@ -81,6 +81,10 @@
 (require 'inheritenv)
 (require 'my-rustic)
 
+(defvar my-last-debug-command nil
+  "Last command that started a debug session.
+Facilitates having a single keybinding for restarting the debug session
+whatever debugger was used")
 (require 'my-gdb)
 
 (setq doom-leader-alt-key "M-j")
@@ -309,9 +313,17 @@ run `my-dape-run'."
   "Run dape with environment and config set by
 `my-dape-config-select-and-run-dape'."
   (interactive)
+  (setq my-last-debug-command #'my-dape-run)
   (let ((process-environment
          (env-get-process-environment-from-alist my-dape-build-env-alist)))
     (dape my-dape-config)))
+
+(defun my-debug-run ()
+  "Relaunch last debug session"
+  (interactive)
+  (if my-last-debug-command
+      (funcall my-last-debug-command)
+    (error "No previous gdb session")))
 
 ;; That view-mode is even better than evil normal mode when we just want to
 ;; read something. So let's make it convenient.
@@ -335,11 +347,13 @@ run `my-dape-run'."
  :leader
  (:prefix "c"
   :desc "Toggle inlay hints" :n "h" #'eglot-inlay-hints-mode)
- (:prefix "j"
+ (:prefix-map ("j". "johast")
   :desc "Project compile" :n "C" #'johast-project-compile
   :desc "Project recompile" :n "c" #'project-recompile
-  :desc "Select & run dape config" :n "D" #'my-dape-config-select-and-run-dape
-  :desc "Run selected dape config " :n "d" #'my-dape-run
+  (:prefix "D"
+   :desc "Select & run dape config" :n "A" #'my-dape-config-select-and-run-dape
+   :desc "Select & run gdb config" :n "D" #'my-gdb-select-config-and-start)
+  :desc "Relaunch debug session" :n "d" #'my-debug-run
   :desc "Org topic dired" :n "t" #'johast-org-topics-dired
   :desc "Org topic sync" :n "T" #'johast-org-topics-sync
   :desc "Treemacs focus" :n "p" #'treemacs-select-window

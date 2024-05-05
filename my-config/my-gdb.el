@@ -56,8 +56,9 @@ done it ourselves using `my-gdbserver-command'."
 (defun my-gdb-start()
   "Start gdb with given configuration in my-gdb-* variables"
   (interactive)
-    (let ((process-environment (env-get-process-environment-from-alist my-gdb-env)))
-      (gdb my-gdb-command)))
+  (setq my-last-debug-command #'my-gdb-start)
+  (let ((process-environment (env-get-process-environment-from-alist my-gdb-env)))
+    (gdb my-gdb-command)))
 
 (defvar my-gdb-configs '(("empty" . '()))
   "alist of \"name\" / plist values where `name' is a descriptive
