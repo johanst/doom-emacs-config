@@ -346,4 +346,11 @@ specific keys. nil means every key is accepted."
 
 (advice-add 'gdb-reset :after 'my-gdb-exit-hook)
 
-;; gud-comint-buffer))
+;; fixing up keymaps
+
+;; from gud.gz source
+;; use keymap-global-set instead of global-set-key because of legacy
+(global-set-key gud-key-prefix gud-global-map)
+
+;; and from dape
+(when dape-key-prefix (global-set-key dape-key-prefix dape-global-map))
