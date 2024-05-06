@@ -95,7 +95,7 @@ this advice suitable for applying before something is both built and run."
 (defun my-rustic-store-target-env()
   "Store the currently selected target build environment for rustic compiling."
   (setq my-rustic-compile-env
-              (env-get-process-environment-from-alist my-rustic-env-target-build)))
+        (env-get-process-environment-from-alist my-rustic-env-target-build)))
 
 (defun my-rustic-advice-activate-stored-env(func &rest args)
   "Active the previously stored process environment.
@@ -134,19 +134,28 @@ compile-commands is form (
 )
 
 where \"cmd\" is the identifier of this compile command,
-':config' is an optional plist entry that identifies the rustic config to use if
- any (must match an entry in 'my-rustic-configs'
-':command' is the actual cargo command to run")
+`:config' is an optional plist entry that identifies the rustic config to use if
+ any (must match an entry in `my-rustic-configs'
+`:command' is the actual cargo command to run")
 
 (defun my-rustic-compile()
-  "Select a cargo compile command, preferably set via dir-locals in project and then
-run `rustic-compile' with that command selected."
+  "Select a cargo compile command and run it with `rustic-compile'.
+Preferably command is set via dir-locals in project."
   (interactive)
-  (when my-rustic-compile-commands-alist
-    (let* ((key (completing-read "Select compile command: " my-rustic-compile-commands-alist))
-           (cmd (cdr (assoc key my-rustic-compile-commands-alist))))
-      (setq compile-command cmd))
-    (rustic-compile)))
+  (if my-rustic-compile-commands-alist
+    (if-let* ((key (completing-read "Select compile command: "
+                                    (mapcar 'car my-rustic-compile-commands-alist)))
+              (cmd (cdr (assoc key my-rustic-compile-commands-alist)))
+              (command (plist-get cmd :command)))
+        (progn
+          (when-let ((cfg-name (plist-get cmd :config)))
+            (my-rustic-select-config cfg-name)
+            (my-rustic-store-target-env))
+          (setq compilation-arguments nil)
+          (setq rustic-compile-command command)
+          (rustic-compile))
+      (error "Invalid compile command"))
+    (error "No commands in `my-rustic-compile-commands-alist'")))
 
 (after! rustic
   ;; tree-sitter-mode will provide text objects like loop, function call, etc.
