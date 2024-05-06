@@ -86,6 +86,7 @@
 Facilitates having a single keybinding for restarting the debug session
 whatever debugger was used")
 (require 'my-gdb)
+(require 'my-dape)
 
 (setq doom-leader-alt-key "M-j")
 (setq doom-localleader-alt-key "M-j m")
@@ -108,140 +109,10 @@ whatever debugger was used")
   ;; Use shfmt as default formatter for sh-mode as well (apheleia only defines bash-ts-mode)
   (setq apheleia-mode-alist (cons '(sh-mode . shfmt) apheleia-mode-alist)))
 
-(after! org
-  (setq org-ellipsis " ▼"))
-
 (after! project
   (setq project-vc-extra-root-markers '(".dir-locals.el")))
 
-(defvar johast-org-topic-dir
-  (expand-file-name "topic" org-directory)
-  "Directory for recording topic specific notes/todos/journal")
-
-(defun johast-org-topics-list ()
-  "Return a list of topics handled by org"
-  (if (file-exists-p johast-org-topic-dir)
-      (cl-remove-if (lambda (x) (member x '("." "..")))
-                    (directory-files johast-org-topic-dir))
-    nil))
-
-(defun johast-org-topic-filename-select (filename)
-  "Query user for a topic in org topic directory and return full path to
-   filename within that directory"
-  (let ((topic-filename
-         (concat (file-name-as-directory johast-org-topic-dir)
-                 (file-name-as-directory (completing-read "Select topic: " (johast-org-topics-list)))
-                 filename)))
-    topic-filename))
-
-(defun johast-org-topic-filename-select-todo ()
-  "Select org topic and return full path to its todo file"
-  (johast-org-topic-filename-select "todo.org"))
-
-(defun johast-org-topic-filename-select-notes ()
-  "Select org topic and return full path to its notes file"
-  (johast-org-topic-filename-select "notes.org"))
-
-(defun johast-org-topic-filename-select-journal ()
-  "Select org topic and return full path to its journal file"
-  (johast-org-topic-filename-select "journal.org"))
-
-(defun johast-org-topics-dired ()
-  "Open dired in org-directory/topic for quick add/remove of directories that
-   will correspond to topics "
-  (interactive)
-  (dired johast-org-topic-dir))
-
-(defun johast-topicdirp (dirname)
-  "Return t if parent directory is topic"
-  (string-equal
-   "topic"
-   (file-name-base
-    (directory-file-name (file-name-directory (expand-file-name dirname)))
-    )))
-
-(defun johast-org-topics-sync ()
-  "Update org-agenda-files to match contents of org-directory/topic"
-  (interactive)
-  (setq
-   org-agenda-files
-   (cons org-directory
-         (when (file-exists-p johast-org-topic-dir)
-           (directory-files-recursively
-            johast-org-topic-dir
-            "\\.org$"
-            t
-            #'johast-topicdirp))))
-  (message "Synchronized topic dir '%s'" johast-org-topic-dir))
-
-(after! org
-  ;; Org-cache seems to be messed up when treemacs is parsing the
-  ;; projects and workspaces
-  (setq org-element-use-cache nil)
-
-  (johast-org-topics-sync)
-  ;; Based on doom default but with option to use centralized topic specific org
-  ;; files instead of project specific, which requires an asssociation with a
-  ;; git repo or some other projectile-way of identifying a project.
-  (setq
-   org-capture-templates
-   '(("t" "Todo" entry
-      (file+headline +org-capture-todo-file "Inbox")
-      "* TODO %?\n%i\n%a" :prepend t)
-     ("T" "Todo +clipboard" entry
-      (file+headline +org-capture-todo-file "Inbox")
-      "* TODO %?\n%x" :prepend t)
-     ("n" "Notes" entry
-      (file+headline +org-capture-notes-file "Inbox")
-      "* %u %?\n%i\n%a" :prepend t)
-     ("N" "Notes +clipboard" entry
-      (file+headline +org-capture-notes-file "Inbox")
-      "* %u %?\n%x" :prepend t)
-     ("j" "Journal" entry
-      (file+olp+datetree +org-capture-journal-file)
-      "* %U %?\n%i\n%a" :prepend t)
-
-     ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
-     ;; {todo,notes,changelog}.org file is found in a parent directory.
-     ;; Uses the basename from `+org-capture-todo-file',
-     ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
-     ("p" "Templates for projects")
-     ("pt" "Project-local todo" entry  ; {project-root}/todo.org
-      (file+headline +org-capture-project-todo-file "Inbox")
-      "* TODO %?\n%i\n%a" :prepend t)
-     ("pT" "Project-local todo +clipboard" entry  ; {project-root}/todo.org
-      (file+headline +org-capture-project-todo-file "Inbox")
-      "* TODO %?\n%x" :prepend t)
-     ("pn" "Project-local notes" entry  ; {project-root}/notes.org
-      (file+headline +org-capture-project-notes-file "Inbox")
-      "* %U %?\n%i\n%a" :prepend t)
-     ("pN" "Project-local notes +clipboard" entry  ; {project-root}/notes.org
-      (file+headline +org-capture-project-notes-file "Inbox")
-      "* %U %?\n%x" :prepend t)
-     ("pc" "Project-local changelog" entry  ; {project-root}/changelog.org
-      (file+headline +org-capture-project-changelog-file "Unreleased")
-      "* %U %?\n%i\n%a" :prepend t)
-
-     ;; Will use {org-directory}/topic/{topic-name}.
-     ("o" "Templates for specific topics")
-     ("ot" "Topic specific todo" entry
-      (file+headline johast-org-topic-filename-select-todo "Inbox")
-      "* TODO %?\n%i\n%a" :prepend t)
-     ("oT" "Topic specific todo" entry
-      (file+headline johast-org-topic-filename-select-todo "Inbox")
-      "* TODO %?\n%x" :prepend t)
-     ("on" "Topic specific notes" entry
-      (file+headline johast-org-topic-filename-select-notes "Inbox")
-      "* %u %?\n%i\n%a" :prepend t)
-     ("oN" "Topic specific notes +clipboard" entry
-      (file+headline johast-org-topic-filename-select-notes "Inbox")
-      "* %u %?\n%x" :prepend t)
-     ("oj" "Topic specific journal" entry
-      (file+olp+datetree johast-org-topic-filename-select-journal)
-      "* %U %?\n%i\n%a" :prepend t)
-     )
-   )
-  )
+(require 'my-org)
 
 ;; Configure LSP servers
 ;; disable inlay hints by default (keybinding for toggling it)
@@ -275,48 +146,6 @@ run `project-compile' with that command selected."
       (setq compile-command cmd))
     (project-compile)))
 
-;; TODO: hooks for running/stopping gdbserver and recompile
-(defvar-local my-dape-configs-alist nil
-  "An alist of dape-commands, key is a string for selection, value is a plist
-of form:
-':config' actual config that can be passed to dape
-':build-env' (optional) alist of environment variables needed on build machine
-to actually run gdb (runtime environment is part of the config,
-at least for gdb)")
-
-(defvar my-dape-build-env-alist nil
-  "Current selected build-environment for dape used by `my-dape-run'.
-See `my-dape-configs-alist'.")
-
-(defvar my-dape-config nil
-  "Current selected dape config used by `my-dape-run'.
-See `my-dape-configs-alist'.")
-
-(defun my-dape-config-select-and-run-dape()
-  "Select a dape-config, preferably set via dir-locals in project, and then
-run `my-dape-run'."
-  (interactive)
-  (if my-dape-configs-alist
-    (let* ((key (completing-read "Select dape command: " my-dape-configs-alist))
-           (cfg (cdr (assoc key my-dape-configs-alist)))
-           (build-env (and
-                       (plist-member cfg :build-env)
-                       (plist-get cfg :build-env)))
-           (cmd (plist-get cfg :config)))
-      (setq
-       my-dape-build-env-alist build-env
-       my-dape-config cmd)
-      (my-dape-run))
-    (message "No dape config available")))
-
-(defun my-dape-run()
-  "Run dape with environment and config set by
-`my-dape-config-select-and-run-dape'."
-  (interactive)
-  (setq my-last-debug-command #'my-dape-run)
-  (let ((process-environment
-         (env-get-process-environment-from-alist my-dape-build-env-alist)))
-    (dape my-dape-config)))
 
 (defun my-debug-run ()
   "Relaunch last debug session"
@@ -354,8 +183,8 @@ run `my-dape-run'."
    :desc "Select & run dape config" :n "A" #'my-dape-config-select-and-run-dape
    :desc "Select & run gdb config" :n "D" #'my-gdb-select-config-and-start)
   :desc "Relaunch debug session" :n "d" #'my-debug-run
-  :desc "Org topic dired" :n "t" #'johast-org-topics-dired
-  :desc "Org topic sync" :n "T" #'johast-org-topics-sync
+  :desc "Org topic dired" :n "t" #'my-org-topics-dired
+  :desc "Org topic sync" :n "T" #'my-org-topics-sync
   :desc "Treemacs focus" :n "p" #'treemacs-select-window
   :desc "View mode" :n "v" #'view-mode)
  (:prefix "o"
