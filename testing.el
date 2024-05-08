@@ -76,6 +76,14 @@ specific keys. nil means every key is accepted."
                '("WSLENV" "EDITOR")
                )
 
+(env-key-value-list-from-alist
+               '(("WSLENV" . "apa")
+                 ("EDITOR" . "emacs")
+                 ("TMUX_PANE" . "jupp")
+                 )
+               '("WSLENV" "EDITOR")
+               )
+
 (setq test-plist '(:key1 "v1" :key2 "v2"))
 (setq mykey :key1)
 (plist-get test-plist mykey)
