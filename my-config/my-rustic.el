@@ -164,11 +164,4 @@ Preferably command is set via dir-locals in project."
   ;; tree-sitter-mode will provide text objects like loop, function call, etc.
   (add-hook 'rustic-mode-hook #'tree-sitter-mode))
 
-(map!
- :after rustic
- :map rustic-mode-map
- (:prefix "C-c t"
-  :desc "Build for target" "b" #'knas
-  :desc "Build for target" "b" #'knas))
-
 (provide 'my-rustic)

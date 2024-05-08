@@ -88,6 +88,8 @@ whatever debugger was used")
 (require 'my-gdb)
 (require 'my-dape)
 
+(require 'my-compile)
+
 (setq doom-leader-alt-key "M-j")
 (setq doom-localleader-alt-key "M-j m")
 
@@ -177,7 +179,7 @@ run `project-compile' with that command selected."
  (:prefix "c"
   :desc "Toggle inlay hints" :n "h" #'eglot-inlay-hints-mode)
  (:prefix-map ("j". "johast")
-  :desc "Project compile" :n "C" #'johast-project-compile
+  :desc "Project compile" :n "C" #'my-project-compile
   :desc "Project recompile" :n "c" #'project-recompile
   (:prefix "D"
    :desc "Select & run dape config" :n "A" #'my-dape-config-select-and-run-dape
