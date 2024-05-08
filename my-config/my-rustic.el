@@ -136,7 +136,10 @@ compile-commands is form (
 where \"cmd\" is the identifier of this compile command,
 `:config' is an optional plist entry that identifies the rustic config to use if
  any (must match an entry in `my-rustic-configs'
-`:command' is the actual cargo command to run")
+`:command' is the actual cargo command to run
+
+`cmd' may also be a string, in which case it just represents the command without
+any other options.")
 
 (defun my-rustic-compile()
   "Select a cargo compile command and run it with `rustic-compile'.
@@ -146,9 +149,9 @@ Preferably command is set via dir-locals in project."
     (if-let* ((key (completing-read "Select compile command: "
                                     (mapcar 'car my-rustic-compile-commands-alist)))
               (cmd (cdr (assoc key my-rustic-compile-commands-alist)))
-              (command (plist-get cmd :command)))
+              (command (if (listp cmd) (plist-get cmd :command) cmd)))
         (progn
-          (when-let ((cfg-name (plist-get cmd :config)))
+          (when-let ((cfg-name (and (listp cmd) (plist-get cmd :config))))
             (my-rustic-select-config cfg-name)
             (my-rustic-store-target-env))
           (setq compilation-arguments nil)
