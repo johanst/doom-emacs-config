@@ -126,6 +126,10 @@ whatever debugger was used")
                '((c-mode c-ts-mode c++-mode c++-ts-mode objc-mode) .
                  ("clangd" "--enable-config"))))
 
+(after! chatgpt-shell
+  (setq chatgpt-shell-openai-key
+        (nth 0 (process-lines "pass" "show" "openai/apikey"))))
+
 (defun johast-treeemacs-toggle()
   "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
 as we go. But for other workspaces we don't want to pollute the setup and there we require
