@@ -185,6 +185,8 @@ run `project-compile' with that command selected."
  (:prefix-map ("j". "johast")
   :desc "Project compile" :n "C" #'my-project-compile
   :desc "Project recompile" :n "c" #'project-recompile
+  :desc "Rustic compile" :n "R" #'my-rustic-compile
+  :desc "Rustic recompile" :n "r" #'rustic-recompile
   (:prefix "D"
    :desc "Select & run dape config" :n "A" #'my-dape-config-select-and-run-dape
    :desc "Select & run gdb config" :n "D" #'my-gdb-select-config-and-start)
