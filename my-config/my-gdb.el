@@ -90,20 +90,35 @@ done it ourselves using `my-gdbserver-command'."
   for that particular project."
  )
 
+(defvar my-gdb-command-history nil
+  "History for selection of gdb commands.")
+
+(defvar my-gdbserver-command-history nil
+  "History for selection of gdbserver commands.")
+
 (defun my-gdb-select-config-and-start(&optional cfg-name)
   "Select a gdb-config, preferably set via dir-locals in project, and then
 run `my-gdb-start'."
   (interactive)
   (let* ((cfg-name (or cfg-name
                        (completing-read "Select gdb config: " (mapcar 'car my-gdb-configs))))
-         (cfg (cdr (assoc-string cfg-name my-gdb-configs))))
-    (setq my-gdbserver-command
-          (and (plist-member cfg :gdbserver-command) (plist-get cfg :gdbserver-command)))
-    (setq my-gdbserver-env
-          (and (plist-member cfg :gdbserver-env) (plist-get cfg :gdbserver-env)))
-    (setq my-gdb-command
-          (and (plist-member cfg :gdb-command) (plist-get cfg :gdb-command)))
-    (setq my-gdb-env
+         (cfg (cdr (assoc-string cfg-name my-gdb-configs)))
+         (gdbserver-command-default
+           (and (plist-member cfg :gdbserver-command) (plist-get cfg :gdbserver-command)))
+         (gdb-command-default
+           (and (plist-member cfg :gdb-command) (plist-get cfg :gdb-command)))
+         (gdbserver-command
+          (read-from-minibuffer "gdbserver command: " gdbserver-command-default nil nil
+                                'my-gdbserver-command-history ))
+         (gdb-command
+          (read-from-minibuffer "gdb command: " gdb-command-default nil nil
+                                'my-gdb-command-history))
+          )
+    (setq my-gdbserver-command gdbserver-command
+          my-gdbserver-env
+          (and (plist-member cfg :gdbserver-env) (plist-get cfg :gdbserver-env))
+          my-gdb-command gdb-command
+          my-gdb-env
           (and (plist-member cfg :gdb-env) (plist-get cfg :gdb-env)))
     (my-gdb-start)))
 
