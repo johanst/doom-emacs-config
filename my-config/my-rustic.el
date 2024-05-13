@@ -1,6 +1,8 @@
 ;;; my-config/my-rustic.el -*- lexical-binding: t; -*-
 (require 'rustic)
 (require 'my-utils)
+(require 'apheleia)
+(require 'tree-sitter)
 
 (defvar my-rustic-env-native-build '()
   "alist of ENV_VAR_NAME/VALUE pairs that will be applied to process
@@ -162,6 +164,10 @@ Preferably command is set via dir-locals in project."
 
 (after! rustic
   ;; tree-sitter-mode will provide text objects like loop, function call, etc.
-  (add-hook 'rustic-mode-hook #'tree-sitter-mode))
+  (add-hook 'rustic-mode-hook #'tree-sitter-mode)
+  ;; there can be only one rust formatter
+  (add-hook 'rustic-mode-hook (lambda () (apheleia-mode t)))
+  )
 
 (provide 'my-rustic)
+;;; my-rustic.el ends here
