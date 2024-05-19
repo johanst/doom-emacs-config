@@ -167,6 +167,10 @@ Preferably command is set via dir-locals in project."
   (add-hook 'rustic-mode-hook #'tree-sitter-mode)
   ;; there can be only one rust formatter
   (add-hook 'rustic-mode-hook (lambda () (apheleia-mode t)))
+  ;; and it shall use edition 2021 to handle async
+  (add-to-list
+   'apheleia-formatters
+    '(rustfmt . ("rustfmt" "--edition" "2021" "--quiet" "--emit" "stdout")))
   )
 
 (provide 'my-rustic)
