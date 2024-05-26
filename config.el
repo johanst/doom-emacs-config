@@ -107,6 +107,11 @@ whatever debugger was used")
 (after! evil-easymotion
   (setq avy-all-windows t))
 
+(after! ace-window
+        (global-set-key (kbd "M-o") 'ace-window)
+        (ace-window-display-mode t)
+        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
 (after! apheleia
   ;; Use shfmt as default formatter for sh-mode as well (apheleia only defines bash-ts-mode)
   (setq apheleia-mode-alist (cons '(sh-mode . shfmt) apheleia-mode-alist)))
