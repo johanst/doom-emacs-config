@@ -107,10 +107,16 @@ whatever debugger was used")
 (after! evil-easymotion
   (setq avy-all-windows t))
 
-(after! ace-window
-        (global-set-key (kbd "M-o") 'ace-window)
-        (ace-window-display-mode t)
-        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+;; Just like in modules/ui/window-select.el, but maps to M-o and does not mess with other-window
+(use-package! ace-window
+  :unless (modulep! +switch-window)
+  :defer t
+  :init
+  (global-set-key (kbd "M-o") #'ace-window)
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (setq aw-scope 'frame
+        aw-background t))
 
 (after! apheleia
   ;; Use shfmt as default formatter for sh-mode as well (apheleia only defines bash-ts-mode)
