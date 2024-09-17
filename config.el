@@ -131,11 +131,17 @@ whatever debugger was used")
 ;; disable inlay hints by default (keybinding for toggling it)
 ;; clangd
 ;;   always allow a `.clangd` config file (why is this not default?)
+;;   also add "--query-driver=/**/*" to make sure cross compiles work by forcing
+;;   clangd to properly pick up the cross compiler sysroot from the actual compiler.
+;;   See https://www.reddit.com/r/emacs/comments/1ascb93/configuring_clangd_on_a_project_basis_is_it/
 (after! eglot
   (add-hook 'eglot-managed-mode-hook (lambda () (eglot-inlay-hints-mode -1)))
   (add-to-list 'eglot-server-programs
                '((c-mode c-ts-mode c++-mode c++-ts-mode objc-mode) .
-                 ("clangd" "--enable-config"))))
+                 ("clangd"
+                  "--enable-config"
+                  "--query-driver=/**/*"
+                  ))))
 
 (after! chatgpt-shell
   (setq chatgpt-shell-openai-key
