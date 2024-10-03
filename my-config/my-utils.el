@@ -4,12 +4,14 @@
   "Given a file containing lines like KEY=value, produce a corresponding alist
 like ((\"KEY1\" . \"value1\") (\"KEY2\" . \"value2\"))"
   (interactive "f.env file: ")
-  (with-temp-buffer
-    (insert-file-contents file)
-    (let ((alist '()))
-      (while (re-search-forward "^\\([^=\n]+\\)=\"?\\([^\"\n]+\\)\"?$" nil t)
-        (push `(,(match-string 1) . ,(match-string 2)) alist))
-      alist)))
+  (and
+   (file-exists-p file)
+   (with-temp-buffer
+     (insert-file-contents file)
+     (let ((alist '()))
+       (while (re-search-forward "^\\([^=\n]+\\)=\"?\\([^\"\n]+\\)\"?$" nil t)
+         (push `(,(match-string 1) . ,(match-string 2)) alist))
+       alist))))
 
 (defun env-plist-from-alist(alist &optional include-keys)
   "Given an alist with KEY/VALUE elements, produce a plist like
