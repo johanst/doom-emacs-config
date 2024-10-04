@@ -4,7 +4,7 @@
 (defvar-local my-compile-commands-alist nil
   "An alist of compile-commands.
 compile-commands is form (
-  (\"cmd\" . (:config \"config\" :command \"ninja build....\"))...
+  (\"cmd\" . (:env alist :command \"ninja build....\"))...
 )
 
 where \"cmd\" is the identifier of this compile command,
