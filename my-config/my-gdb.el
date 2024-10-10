@@ -108,8 +108,10 @@ run `my-gdb-start'."
          (gdb-command-default
            (and (plist-member cfg :gdb-command) (plist-get cfg :gdb-command)))
          (gdbserver-command
-          (read-from-minibuffer "gdbserver command: " gdbserver-command-default nil nil
-                                'my-gdbserver-command-history ))
+          ;; only prompt for gdbserver-command if there is a default
+          (when gdbserver-command-default
+            (read-from-minibuffer "gdbserver command: " gdbserver-command-default nil nil
+                                  'my-gdbserver-command-history )))
          (gdb-command
           (read-from-minibuffer "gdb command: " gdb-command-default nil nil
                                 'my-gdb-command-history))
