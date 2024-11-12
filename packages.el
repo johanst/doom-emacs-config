@@ -53,6 +53,7 @@
 
 (package! dape)
 (package! meson-mode)
+(package! nim-mode)
 
 (package! shell-maker
   :recipe (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))

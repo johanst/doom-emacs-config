@@ -120,7 +120,19 @@ whatever debugger was used")
 
 (after! apheleia
   ;; Use shfmt as default formatter for sh-mode as well (apheleia only defines bash-ts-mode)
-  (setq apheleia-mode-alist (cons '(sh-mode . shfmt) apheleia-mode-alist)))
+  (setq apheleia-mode-alist
+        (append '((sh-mode . shfmt)
+                  (nim-mode . nimpretty))
+                apheleia-mode-alist)))
+
+(after! nim-mode
+  (add-hook 'nim-mode-hook (lambda () (apheleia-mode t)))
+  ;; Make sure apheleia can locate nimpretty. On WSL installation I had to make
+  ;; a symbolic link from /usr/bin/nimpretty to the actual location in $HOME
+  (add-to-list
+   'apheleia-formatters
+    '(nimpretty . ("nimpretty" "--indent:2" inplace)))
+  )
 
 (after! project
   (setq project-vc-extra-root-markers '(".dir-locals.el")))
