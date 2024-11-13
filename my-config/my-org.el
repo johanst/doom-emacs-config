@@ -64,6 +64,9 @@
   (message "Synchronized topic dir '%s'" my-org-topic-dir))
 
 (after! org
+  ;; Open org links in other window
+  (add-to-list 'org-link-frame-setup (cons 'file 'find-file-other-window))
+
   ;; Org-cache seems to be messed up when treemacs is parsing the
   ;; projects and workspaces
   (setq org-element-use-cache nil)
