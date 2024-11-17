@@ -127,6 +127,7 @@ whatever debugger was used")
 
 (after! nim-mode
   (add-hook 'nim-mode-hook (lambda () (apheleia-mode t)))
+  (add-hook 'nim-mode-local-vars-hook #'lsp! 'append)
   ;; Make sure apheleia can locate nimpretty. On WSL installation I had to make
   ;; a symbolic link from /usr/bin/nimpretty to the actual location in $HOME
   (add-to-list
@@ -153,7 +154,10 @@ whatever debugger was used")
                  ("clangd"
                   "--enable-config"
                   "--query-driver=/**/*"
-                  ))))
+                  )))
+  (add-to-list 'eglot-server-programs
+               '((nim-mode) . ("nimlsp")))
+  )
 
 (after! chatgpt-shell
   (setq chatgpt-shell-openai-key
