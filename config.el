@@ -125,6 +125,13 @@ whatever debugger was used")
                   (nim-mode . nimpretty))
                 apheleia-mode-alist)))
 
+(after! diff-hl
+  ;; There seems to be a bug in doom's fix for killing threads, see
+  ;; ~/.config/emacs/modules/ui/vc-gutter/config.el:193
+  ;; Seems there is a race sometimes causing the lambda performing the thread killing to go wild
+  ;; and use lots of memory. Let's try without async for a while.
+  (setq diff-hl-update-async nil))
+
 (after! nim-mode
   (add-hook 'nim-mode-hook (lambda () (apheleia-mode t)))
   (add-hook 'nim-mode-local-vars-hook #'lsp! 'append)
