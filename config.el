@@ -230,7 +230,9 @@ run `project-compile' with that command selected."
   (:prefix "D"
    :desc "Select & run dape config" :n "A" #'my-dape-config-select-and-run-dape
    :desc "Select & run gdb config" :n "D" #'my-gdb-select-config-and-start)
-  :desc "Relaunch debug session" :n "d" #'my-debug-run
+  (:prefix "d"
+   :desc "Relaunch debug session" :n "d" #'my-debug-run
+   :desc "Save breakpoints" :n "B" #'my-gdb-save-breakpoints)
   :desc "Org topic dired" :n "t" #'my-org-topics-dired
   :desc "Org topic sync" :n "T" #'my-org-topics-sync
   :desc "Treemacs focus" :n "p" #'treemacs-select-window

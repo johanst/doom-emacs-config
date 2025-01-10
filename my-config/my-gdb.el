@@ -21,6 +21,9 @@ attach to gdbserver if `my-gdbserver-command' is set, e.g.
 (defvar my-gdb-env '()
   "alist of KEY/VALUE environment variables to be set before starting gdb")
 
+(defvar my-gdb-breakpoints-file ""
+  "Path to file of saved breakpoints to restore when gdb is restarted")
+
 (defun my-gdb-config-reset()
   "Reset all my-gdb settings"
   (interactive)
@@ -54,11 +57,17 @@ done it ourselves using `my-gdbserver-command'."
 (advice-add #'gdb-inferior-io--init-proc :around #'my-gdb-inferior-io--init-proc-advice)
 
 (defun my-gdb-pause()
-  "Pause debugged program. Apparently a missing command in gdb/gud"
+  "Pause debugged program. Apparently a missing command in gdb/gud."
   (interactive)
   (when gud-running
     (with-current-buffer gud-comint-buffer
       (comint-interrupt-subjob))))
+
+(defun my-gdb-save-breakpoints()
+  "Save current breakpoint configuration to `my-gdb-breakpoints-file'."
+  (interactive)
+  (when (and (not gud-running) (not (string-empty-p my-gdb-breakpoints-file)))
+    (gud-call (concat "save breakpoints " my-gdb-breakpoints-file))))
 
 (defun my-gdb-start()
   "Start gdb with given configuration in my-gdb-* variables"
@@ -84,6 +93,9 @@ done it ourselves using `my-gdbserver-command'."
  name for the particular gdb configuration described by
   `plist'. The keywords in plist correspond to variables named
   my-gdb-*, i.e.
+     :gdb-command value => set my-gdb-command to value (MANDATORY)
+     :gdb-env value => set my-gdb-env to value
+     :gdb-breakpoints-file => set my-gdb-breakpoints-file to value
      :gdbserver-command value => set my-gdbserver-command to
   value. This variable is expected to be set in a directory local
   variable within a project to describe the specific gdb config
@@ -97,16 +109,21 @@ done it ourselves using `my-gdbserver-command'."
   "History for selection of gdbserver commands.")
 
 (defun my-gdb-select-config-and-start(&optional cfg-name)
-  "Select a gdb-config, preferably set via dir-locals in project, and then
-run `my-gdb-start'."
+  "Select gdb-config CFG-NAME, preferably set via dir-locals in project, and then run `my-gdb-start'."
   (interactive)
   (let* ((cfg-name (or cfg-name
                        (completing-read "Select gdb config: " (mapcar 'car my-gdb-configs))))
          (cfg (cdr (assoc-string cfg-name my-gdb-configs)))
+         (gdb-breakpoints-file
+          (and (plist-member cfg :gdb-breakpoints-file) (plist-get cfg :gdb-breakpoints-file)))
+         (gdb-breakpoints-load-command
+          (if (and (not (string-empty-p gdb-breakpoints-file)) (file-exists-p gdb-breakpoints-file))
+              (concat " -ex \"set breakpoint pending on\" -x " gdb-breakpoints-file " ")
+            ""))
          (gdbserver-command-default
            (and (plist-member cfg :gdbserver-command) (plist-get cfg :gdbserver-command)))
          (gdb-command-default
-           (and (plist-member cfg :gdb-command) (plist-get cfg :gdb-command)))
+           (concat (and (plist-member cfg :gdb-command) (plist-get cfg :gdb-command)) gdb-breakpoints-load-command))
          (gdbserver-command
           ;; only prompt for gdbserver-command if there is a default
           (when gdbserver-command-default
@@ -121,7 +138,9 @@ run `my-gdb-start'."
           (and (plist-member cfg :gdbserver-env) (plist-get cfg :gdbserver-env))
           my-gdb-command gdb-command
           my-gdb-env
-          (and (plist-member cfg :gdb-env) (plist-get cfg :gdb-env)))
+          (and (plist-member cfg :gdb-env) (plist-get cfg :gdb-env))
+          my-gdb-breakpoints-file gdb-breakpoints-file
+          )
     (my-gdb-start)))
 
 (provide 'my-gdb)
