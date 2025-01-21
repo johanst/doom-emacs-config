@@ -240,15 +240,19 @@ run `project-compile' with that command selected."
  (:prefix "o"
   :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
 
-;; The emacs default comment-dwim" keybinding "M-;" does not work through terminals (nor does "C-;")
+;; The emacs default comment-dwim" keybinding "M-;" does not work through certain terminals (nor does "C-;")
 ;; "C-/" is by default undo in emacs, but in evil-mode we have "u" for that so we can use "C-/" for
 ;; handling comments instead.
+;; Furthermore WezTerm (and probably some other terminals) transmit C-/ as C-_ (basically ignoring
+;; bit 6 and 7 of ASCII) so therefore we bind everything that is bound to C-/ to C-_ as well.
 ;; Because "comment-dwim" does not do what i mean when no region is marked (it adds a comment add the end of
 ;; the line instead of just commenting/uncommenting the whole line) we instead use "comment-line" when in
 ;; normal or insert mode and only "comment-dwim" when in visual mode (i.e. a region is marked).
 (map!
  :desc "Comment line" :ni "C-/" #'comment-line
- :desc "Comment region" :v "C-/" #'comment-dwim)
+ :desc "Comment region" :v "C-/" #'comment-dwim
+ :desc "Comment line" :ni "C-_" #'comment-line
+ :desc "Comment region" :v "C-_" #'comment-dwim)
 
 ;; Alternative to Ctrl-I/Ctrl-O in terminal mode
 ;; (Ctrl-I is indistinguashible from TAB)
