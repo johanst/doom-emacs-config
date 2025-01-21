@@ -69,6 +69,12 @@ done it ourselves using `my-gdbserver-command'."
   (when (and (not gud-running) (not (string-empty-p my-gdb-breakpoints-file)))
     (gud-call (concat "save breakpoints " my-gdb-breakpoints-file))))
 
+(defun my-gdb-load-breakpoints()
+  "Save current breakpoint configuration to `my-gdb-breakpoints-file'."
+  (interactive)
+  (when (and (not gud-running) (not (string-empty-p my-gdb-breakpoints-file)))
+    (gud-call (concat "source " my-gdb-breakpoints-file))))
+
 (defun my-gdb-start()
   "Start gdb with given configuration in my-gdb-* variables"
   (interactive)
@@ -117,9 +123,11 @@ done it ourselves using `my-gdbserver-command'."
          (gdb-breakpoints-file
           (and (plist-member cfg :gdb-breakpoints-file) (plist-get cfg :gdb-breakpoints-file)))
          (gdb-breakpoints-load-command
-          (if (and (not (string-empty-p gdb-breakpoints-file)) (file-exists-p gdb-breakpoints-file))
-              (concat " -ex \"set breakpoint pending on\" -x " gdb-breakpoints-file " ")
-            ""))
+          ;; (if (and (not (string-empty-p gdb-breakpoints-file)) (file-exists-p gdb-breakpoints-file))
+          ;;     (concat " -ex \"set breakpoint pending on\" -x " gdb-breakpoints-file " ")
+          ;;   "")
+          " -ex \"set breakpoint pending on\" "
+          )
          (gdbserver-command-default
            (and (plist-member cfg :gdbserver-command) (plist-get cfg :gdbserver-command)))
          (gdb-command-default

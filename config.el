@@ -232,7 +232,9 @@ run `project-compile' with that command selected."
    :desc "Select & run gdb config" :n "D" #'my-gdb-select-config-and-start)
   (:prefix "d"
    :desc "Relaunch debug session" :n "d" #'my-debug-run
-   :desc "Save breakpoints" :n "B" #'my-gdb-save-breakpoints)
+   :desc "Save breakpoints" :n "B" #'my-gdb-save-breakpoints
+   :desc "Load breakpoints" :n "b" #'my-gdb-load-breakpoints
+   )
   :desc "Org topic dired" :n "t" #'my-org-topics-dired
   :desc "Org topic sync" :n "T" #'my-org-topics-sync
   :desc "Treemacs focus" :n "p" #'treemacs-select-window
