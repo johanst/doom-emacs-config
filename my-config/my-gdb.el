@@ -18,6 +18,12 @@ e.g. \"gdbserver 192.168.2.141:1234 ~/myprog\"")
 attach to gdbserver if `my-gdbserver-command' is set, e.g.
 `gdb -i=mi ~/myprog -ex \"target remote 192.168.2.141:1234\"'")
 
+(defvar my-gdb-inferior-args nil
+  "Arguments passed to the program being debugged.
+When `my-gdb-command' contains an instruction to start debugging a
+program, \"--args MY-GDB-INFERIOR-ARGS\" is appended to the gdb launch
+command line.")
+
 (defvar my-gdb-env '()
   "alist of KEY/VALUE environment variables to be set before starting gdb")
 
@@ -30,6 +36,7 @@ attach to gdbserver if `my-gdbserver-command' is set, e.g.
   (setq my-gdbserver-command nil
         my-gdbserver-env nil
         my-gdb-command nil
+        my-gdb-inferior-args nil
         my-gdb-env nil))
 
 (defun my-gdb-inferior-io-mode-hook ()
@@ -120,18 +127,23 @@ done it ourselves using `my-gdbserver-command'."
   (let* ((cfg-name (or cfg-name
                        (completing-read "Select gdb config: " (mapcar 'car my-gdb-configs))))
          (cfg (cdr (assoc-string cfg-name my-gdb-configs)))
-         (gdb-breakpoints-file
+         (breakpoints-file
           (and (plist-member cfg :gdb-breakpoints-file) (plist-get cfg :gdb-breakpoints-file)))
-         (gdb-breakpoints-load-command
-          ;; (if (and (not (string-empty-p gdb-breakpoints-file)) (file-exists-p gdb-breakpoints-file))
-          ;;     (concat " -ex \"set breakpoint pending on\" -x " gdb-breakpoints-file " ")
+         (breakpoints-load-command
+          ;; (if (and (not (string-empty-p breakpoints-file)) (file-exists-p breakpoints-file))
+          ;;     (concat " -ex \"set breakpoint pending on\" -x " breakpoints-file " ")
           ;;   "")
           " -ex \"set breakpoint pending on\" "
           )
+         (inferior-args
+          (if (plist-member cfg :gdb-inferior-args)
+              (concat " --args " (plist-get cfg :gdb-inferior-args))))
          (gdbserver-command-default
            (and (plist-member cfg :gdbserver-command) (plist-get cfg :gdbserver-command)))
          (gdb-command-default
-           (concat (and (plist-member cfg :gdb-command) (plist-get cfg :gdb-command)) gdb-breakpoints-load-command))
+           (concat (and (plist-member cfg :gdb-command) (plist-get cfg :gdb-command))
+                   breakpoints-load-command
+                   inferior-args))
          (gdbserver-command
           ;; only prompt for gdbserver-command if there is a default
           (when gdbserver-command-default
@@ -147,7 +159,7 @@ done it ourselves using `my-gdbserver-command'."
           my-gdb-command gdb-command
           my-gdb-env
           (and (plist-member cfg :gdb-env) (plist-get cfg :gdb-env))
-          my-gdb-breakpoints-file gdb-breakpoints-file
+          my-gdb-breakpoints-file breakpoints-file
           )
     (my-gdb-start)))
 
