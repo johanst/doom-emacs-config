@@ -166,9 +166,16 @@ whatever debugger was used")
                '((nim-mode) . ("nimlsp")))
   )
 
-(after! chatgpt-shell
-  (setq chatgpt-shell-openai-key
-        (nth 0 (process-lines "pass" "show" "openai/apikey"))))
+;; (after! chatgpt-shell
+;;   (setq chatgpt-shell-openai-key
+;;         (nth 0 (process-lines "pass" "show" "openai/apikey"))))
+
+(use-package! gptel
+  :config
+  (setq
+   gptel-api-key (nth 0 (process-lines "pass" "show" "openai/apikey"))
+   gptel-default-mode 'org-mode
+   ))
 
 (defun johast-treeemacs-toggle()
   "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
