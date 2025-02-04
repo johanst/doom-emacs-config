@@ -183,7 +183,7 @@ whatever debugger was used")
 (use-package! gptel
   :config
   (setq
-   gptel-api-key (nth 0 (process-lines "pass" "show" "openai/apikey"))
+   gptel-api-key (ignore-errors (nth 0 (process-lines "pass" "show" "openai/apikey")))
    gptel-default-mode 'org-mode
    ))
 
