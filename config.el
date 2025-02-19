@@ -171,6 +171,11 @@ whatever debugger was used")
                '((nim-mode) . ("nimlsp")))
   )
 
+;; Add the missing git commands to magit
+(after! magit
+  (transient-append-suffix 'magit-fetch "-F"
+    '("-U" "Unshallow" "--unshallow")))
+
 ;; (after! chatgpt-shell
 ;;   (setq chatgpt-shell-openai-key
 ;;         (nth 0 (process-lines "pass" "show" "openai/apikey"))))
