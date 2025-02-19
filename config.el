@@ -90,6 +90,11 @@ whatever debugger was used")
 
 (require 'my-compile)
 
+(let ((dir (expand-file-name "my-confidential" doom-user-dir)))
+  (when (and (file-exists-p dir) (file-directory-p dir))
+    (add-load-path! "my-confidential")
+    (require 'my-confidential)))
+
 (setq doom-leader-alt-key "M-j")
 (setq doom-localleader-alt-key "M-j m")
 
