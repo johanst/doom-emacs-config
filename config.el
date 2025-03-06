@@ -259,6 +259,10 @@ run `project-compile' with that command selected."
  (:prefix "o"
   :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
 
+(map!
+ :desc "gptel" "C-c l" #'gptel ;; l is for LLM...
+ )
+
 ;; The emacs default comment-dwim" keybinding "M-;" does not work through certain terminals (nor does "C-;")
 ;; "C-/" is by default undo in emacs, but in evil-mode we have "u" for that so we can use "C-/" for
 ;; handling comments instead.
