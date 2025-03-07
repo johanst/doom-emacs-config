@@ -9,7 +9,7 @@ like ((\"KEY1\" . \"value1\") (\"KEY2\" . \"value2\"))"
    (with-temp-buffer
      (insert-file-contents file)
      (let ((alist '()))
-       (while (re-search-forward "^\\([^=\n]+\\)=\"?\\([^\"\n]+\\)\"?$" nil t)
+       (while (re-search-forward "^\\([^#\n][^=\n]+\\)=\"?\\([^\"\n]+\\)\"?$" nil t)
          (push `(,(match-string 1) . ,(match-string 2)) alist))
        alist))))
 
