@@ -102,6 +102,13 @@ whatever debugger was used")
 
 (repeat-mode 1)
 
+(defun my/show-trailing-whitespace-in-text-modes ()
+  "Enable trailing whitespace visual markers in text, programming, and org modes."
+  (when (derived-mode-p 'text-mode 'prog-mode 'org-mode)  ; Text, programming, and org modes
+    (setq show-trailing-whitespace t)))
+
+(add-hook 'after-change-major-mode-hook 'my/show-trailing-whitespace-in-text-modes)
+
 (after! cc-mode
   ;; tree-sitter-mode will provide text objects like loop, function call, etc.
   (add-hook 'c-mode-common-hook #'tree-sitter-mode))
