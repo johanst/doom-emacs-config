@@ -138,6 +138,10 @@ whatever debugger was used")
                 apheleia-mode-alist)))
 
 (after! diff-hl
+  ;; FIXME: The bug described below makes vc-gutter unusable. Tried a while without async
+  ;; and the result is that emacs gets gradually more and more unresponsive until it
+  ;; has to be shut down. For now, disable vc-gutter.
+  ;;
   ;; There seems to be a bug in doom's fix for killing threads, see
   ;; ~/.config/emacs/modules/ui/vc-gutter/config.el:193
   ;; Seems there is a race sometimes causing the lambda performing the thread killing to go wild
