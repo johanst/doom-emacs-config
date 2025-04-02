@@ -185,6 +185,8 @@ whatever debugger was used")
 ;; Add the missing git commands to magit
 (after! magit
   (transient-append-suffix 'magit-fetch "-F"
+    '("-U" "Unshallow" "--unshallow"))
+  (transient-append-suffix 'magit-pull "-F"
     '("-U" "Unshallow" "--unshallow")))
 
 ;; (after! chatgpt-shell
