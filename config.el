@@ -249,6 +249,7 @@ run `project-compile' with that command selected."
   (add-hook 'view-mode-hook #'johast-view-mode-save-restore-evil-state))
 
 (map!
+ :desc "Quick goto anywhere" :n "U" #'evil-avy-goto-char-2
  :leader
  (:prefix "c"
   :desc "Toggle inlay hints" :n "h" #'eglot-inlay-hints-mode)
