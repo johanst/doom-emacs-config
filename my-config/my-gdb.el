@@ -121,13 +121,10 @@ done it ourselves using `my-gdbserver-command'."
 (defvar my-gdbserver-command-history nil
   "History for selection of gdbserver commands.")
 
-(defun my-gdb-select-config-and-start(&optional cfg-name)
-  "Select gdb-config CFG-NAME, preferably set via dir-locals in project, and then run `my-gdb-start'."
-  (interactive)
-  (let* ((cfg-name (or cfg-name
-                       (completing-read "Select gdb config: " (mapcar 'car my-gdb-configs))))
-         (cfg (cdr (assoc-string cfg-name my-gdb-configs)))
-         (breakpoints-file
+(defun my-gdb-start-session-from-config(cfg)
+  "Start a gdb session from config CFG.
+Allow manual tweaking and then run `my-gdb-start'."
+  (let* ((breakpoints-file
           (and (plist-member cfg :gdb-breakpoints-file) (plist-get cfg :gdb-breakpoints-file)))
          (breakpoints-load-command
           ;; (if (and (not (string-empty-p breakpoints-file)) (file-exists-p breakpoints-file))
@@ -162,5 +159,16 @@ done it ourselves using `my-gdbserver-command'."
           my-gdb-breakpoints-file breakpoints-file
           )
     (my-gdb-start)))
+
+(defun my-gdb-select-config-and-start(&optional cfg-name)
+  "Select gdb-config CFG-NAME, preferably set via dir-locals in project, and then run `my-gdb-start'."
+  (interactive)
+  (let* ((cfg-name (or cfg-name
+                       (completing-read "Select gdb config: " (mapcar 'car my-gdb-configs))))
+         (cfg (cdr (assoc-string cfg-name my-gdb-configs)))
+         )
+    (my-gdb-start-session-from-config cfg)
+    )
+  )
 
 (provide 'my-gdb)
