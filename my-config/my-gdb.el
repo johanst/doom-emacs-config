@@ -5,6 +5,8 @@
 (setq gdb-many-windows t)
 (setq gdb-restore-window-configuration-after-quit t)
 (setq gdb-debuginfod-enable-setting t)
+;; By default don't let all threads run while pausing, it's confusing
+(setq gdb-non-stop-setting nil)
 
 (defvar my-gdbserver-command nil
   "Command that will be used to start gdbserver in inferior window,

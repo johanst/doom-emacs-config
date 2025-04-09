@@ -277,9 +277,12 @@ run `project-compile' with that command selected."
  :desc "Relaunch debug session" "C-c d d" #'my-debug-run
  :desc "Save breakpoints" "C-c d B" #'my-gdb-save-breakpoints
  :desc "Load breakpoints" "C-c d b" #'my-gdb-load-breakpoints
- :desc "Select & run dape config" "C-c D A" #'my-dape-config-select-and-run-dape
- :desc "Select & run gdb config" "C-c D D" #'my-gdb-select-config-and-start
+ :desc "Select & run project dape config" "C-c D A" #'my-dape-config-select-and-run-dape
+ :desc "Select & run project gdb config" "C-c D J" #'my-gdb-select-config-and-start
+ ;; "C-c D D" is left for site-specific stuff in my-confidential
  :desc "Recompile" "C-c c" #'recompile
+ ;; "C-c C C" is left for site-specific stuff in my-confidential
+ :desc "Select & run project compile task" "C-c C J" #'my-project-compile
  :desc "gptel" "C-c l" #'gptel ;; l is for LLM...
  )
 
