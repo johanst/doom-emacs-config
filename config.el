@@ -270,8 +270,7 @@ run `project-compile' with that command selected."
   :desc "Org topic sync" :n "T" #'my-org-topics-sync
   :desc "Treemacs focus" :n "p" #'treemacs-select-window
   :desc "View mode" :n "v" #'view-mode)
- (:prefix "o"
-  :desc "Treemacs toggle" :n "p" #'johast-treeemacs-toggle))
+ )
 
 (map!
  :desc "Relaunch debug session" "C-c d d" #'my-debug-run
