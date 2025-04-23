@@ -250,6 +250,8 @@ run `project-compile' with that command selected."
 
 (map!
  :desc "Quick goto anywhere" :n "U" #'evil-avy-goto-char-2
+ :desc "Query replace" :vn "&" #'query-replace          ;; A whole lot easier than S-M-5 (%)
+ :desc "Query replace" :vn "g&" #'query-replace-regexp  ;; not to mention C-S-M-5 (%)
  :leader
  (:prefix "c"
   :desc "Toggle inlay hints" :n "h" #'eglot-inlay-hints-mode)
