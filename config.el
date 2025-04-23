@@ -303,10 +303,17 @@ run `project-compile' with that command selected."
 
 ;; Alternative to Ctrl-I/Ctrl-O in terminal mode
 ;; (Ctrl-I is indistinguashible from TAB)
-(global-set-key (kbd "<f3>") #'better-jumper-jump-backward)
-(global-set-key (kbd "<f4>") #'better-jumper-jump-forward)
-;; let's add workspaces for now (beware of M-f4 on Windows though)
-(global-set-key (kbd "<M-f3>") #'+workspace/cycle)
+;; C-x <up>/<down> seems to be unassigned so we can use it as a general
+;; back/forward
+(global-set-key (kbd "C-x <up>") #'better-jumper-jump-backward)
+(global-set-key (kbd "C-x <down>") #'better-jumper-jump-forward)
+
+(defvar-keymap johast-better-jumper-repeat-map
+  :doc "Keymap to repeat `better-jumper-*'.
+Used in `repeat-mode'."
+  :repeat t
+  "<up>" #'better-jumper-jump-backward
+  "<down>" #'better-jumper-jump-forward)
 
 ;; Alternative to C-; and C-c C-; in terminal mode
 (map!
@@ -332,8 +339,7 @@ run `project-compile' with that command selected."
  ;; when there is something at point. "t" is close to "y" so why not...
  "t" #'View-scroll-line-forward)
 
-;; C-x <up>/<down> seems to be unassigned so we can use it as a general
-;; back/forward within a specific mode (like info).
+;; Specialized jumper for info mode...
 ;; Apparently doom, evil or something has messed up info-mode so that
 ;; ctrl-i/ctrl-o is not symmetrical, and again ctrl-i is not terminal friendly
 ;; anyway
