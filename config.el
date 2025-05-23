@@ -285,6 +285,7 @@ run `project-compile' with that command selected."
  ;; "C-c C C" is left for site-specific stuff in my-confidential
  :desc "Select & run project compile task" "C-c C J" #'my-project-compile
  :desc "gptel" "C-c l" #'gptel ;; l is for LLM...
+ :desc "calc" "C-c *" #'calc ;; Slightly faster than C-x * c
  )
 
 ;; The emacs default comment-dwim" keybinding "M-;" does not work through certain terminals (nor does "C-;")
@@ -346,6 +347,7 @@ Used in `repeat-mode'."
 (map!
  :after info
  :map Info-mode-map
+ :n "TAB"     #'Info-next-reference
  "C-x <up>" #'Info-history-back
  "C-x <down>" #'Info-history-forward)
 
