@@ -189,16 +189,11 @@ whatever debugger was used")
   (transient-append-suffix 'magit-pull "-F"
     '("-U" "Unshallow" "--unshallow")))
 
-;; (after! chatgpt-shell
-;;   (setq chatgpt-shell-openai-key
-;;         (nth 0 (process-lines "pass" "show" "openai/apikey"))))
-
-(use-package! gptel
-  :config
+(after! gptel
   (setq
-   gptel-api-key (ignore-errors (nth 0 (process-lines "pass" "show" "openai/apikey")))
    gptel-default-mode 'org-mode
-   ))
+   gptel-model 'gpt-4.1
+   gptel-backend (gptel-make-gh-copilot "Copilot")))
 
 (defun johast-treeemacs-toggle()
   "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
