@@ -203,11 +203,44 @@ whatever debugger was used")
       (call-interactively #'gptel-quick))
     (setq gptel-quick-use-context old-context)))
 
+(defvar my-gptel-default-quick-system-message nil
+  "A variable that holds the default system message from gptel.")
+
+(defvar my-gptel-skånska-quick-system-message
+  (lambda (count)
+    (concat (format "Explain in %d words or fewer. " count )
+            "Use swedish colloquial language and spelling with accent skånska. "
+            "Try to use as much skånska as possible without losing clarity."))
+  "A variable that holds the skånska system message from gptel.")
+
+(defvar my-gptel-skånska nil
+  "Whether gptel should talk skånska.")
+
+(defun my-gptel-toggle-skånska ()
+    "Toggle skånska"
+    (interactive)
+    (if my-gptel-skånska
+        (progn
+          (setq my-gptel-skånska nil)
+          (message "Being international now.")
+          (when my-gptel-default-quick-system-message
+            (setq gptel-quick-system-message my-gptel-default-quick-system-message)))
+      (progn
+          (setq my-gptel-skånska t)
+          (message "Förklarar nu på redig skånska.")
+          (when my-gptel-default-quick-system-message
+            (setq gptel-quick-system-message my-gptel-skånska-quick-system-message)))))
+
 (after! gptel-quick
   (setq
    gptel-quick-timeout 120 ;; 2 minutes, but why would i ever want a timeout ?
-   gptel-quick-word-count 50 ;; I would rarely want less than 50 words in an explanation
-   ))
+   gptel-quick-word-count 30 ;; I would rarely want less than 30 words in an explanation
+   my-gptel-default-quick-system-message gptel-quick-system-message
+   )
+  (when my-gptel-skånska
+    (setq gptel-quick-system-message my-gptel-skånska-quick-system-message))
+  )
+
 
 (defun johast-treeemacs-toggle()
   "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
@@ -264,6 +297,8 @@ run `project-compile' with that command selected."
  :leader
  (:prefix "c"
   :desc "Toggle inlay hints" :n "h" #'eglot-inlay-hints-mode)
+ (:prefix "t"
+  :desc "Toggle skånska" :n "j" #'my-gptel-toggle-skånska)
  (:prefix-map ("j". "johast")
   :desc "Project compile" :n "C" #'my-project-compile
   :desc "Project recompile" :n "c" #'project-recompile
