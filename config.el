@@ -195,6 +195,20 @@ whatever debugger was used")
    gptel-model 'gpt-4.1
    gptel-backend (gptel-make-gh-copilot "Copilot")))
 
+(defun my-gptel-quick-with-context ()
+  (interactive)
+  (let ((old-context gptel-quick-use-context))
+    (setq gptel-quick-use-context t)
+    (save-excursion
+      (call-interactively #'gptel-quick))
+    (setq gptel-quick-use-context old-context)))
+
+(after! gptel-quick
+  (setq
+   gptel-quick-timeout 120 ;; 2 minutes, but why would i ever want a timeout ?
+   gptel-quick-word-count 50 ;; I would rarely want less than 50 words in an explanation
+   ))
+
 (defun johast-treeemacs-toggle()
   "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
 as we go. But for other workspaces we don't want to pollute the setup and there we require
@@ -280,6 +294,8 @@ run `project-compile' with that command selected."
  ;; "C-c C C" is left for site-specific stuff in my-confidential
  :desc "Select & run project compile task" "C-c C J" #'my-project-compile
  :desc "gptel" "C-c l" #'gptel ;; l is for LLM...
+ :desc "gptel" "C-c L" #'gptel-menu ;; l is for LLM...
+ :desc "gptel" "C-c e" #'gptel-quick ;; l is for LLM...
  :desc "calc" "C-c *" #'calc ;; Slightly faster than C-x * c
  )
 
