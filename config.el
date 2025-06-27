@@ -330,6 +330,8 @@ Used in `repeat-mode'."
 ;; Alternative to C-; and C-c C-; in terminal mode
 (map!
  "M-," #'embark-act
+  (:map embark-file-map
+         :desc "Add to gptel context"        ","   #'gptel-add-file)
  (:map minibuffer-local-map
        "M-,"               #'embark-act
        "C-c M-,"           #'embark-export
