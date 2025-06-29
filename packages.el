@@ -56,3 +56,5 @@
 (package! nim-mode)
 (package! ace-window)
 (package! posframe) ;; For gptel-quick
+(package! gptel-autocomplete
+  :recipe (:type git :host github :repo "JDNdeveloper/gptel-autocomplete"))
