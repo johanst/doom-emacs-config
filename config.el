@@ -195,6 +195,16 @@ whatever debugger was used")
    gptel-model 'gpt-4.1
    gptel-backend (gptel-make-gh-copilot "Copilot")))
 
+(defun my-gptel-use-claude ()
+  (interactive)
+  (require 'gptel)
+  (setq
+   gptel-model 'claude-3-5-sonnet-20241022
+   gptel-backend
+   (gptel-make-anthropic "Claude"
+     :stream t
+     :key (nth 0 (process-lines "pass" "show" "anthropic/apikey")))))
+
 (defun my-gptel-quick-with-context ()
   (interactive)
   (let ((old-context gptel-quick-use-context))
@@ -328,9 +338,9 @@ run `project-compile' with that command selected."
  :desc "Recompile" "C-c c" #'recompile
  ;; "C-c C C" is left for site-specific stuff in my-confidential
  :desc "Select & run project compile task" "C-c C J" #'my-project-compile
- :desc "gptel" "C-c l" #'gptel ;; l is for LLM...
- :desc "gptel" "C-c L" #'gptel-menu ;; l is for LLM...
- :desc "gptel" "C-c e" #'gptel-quick ;; l is for LLM...
+ :desc "gptel chat" "C-c l" #'gptel ;; l is for LLM...
+ :desc "gptel menu" "C-c L" #'gptel-menu
+ :desc "gptel explain" "C-c e" #'gptel-quick
  :desc "calc" "C-c *" #'calc ;; Slightly faster than C-x * c
  )
 
