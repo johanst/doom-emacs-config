@@ -340,6 +340,7 @@ run `project-compile' with that command selected."
  :desc "Save breakpoints" "C-c d B" #'my-gdb-save-breakpoints
  :desc "Load breakpoints" "C-c d b" #'my-gdb-load-breakpoints
  :desc "GDB restore windows" "C-c d r" #'gdb-restore-windows
+ :desc "GDB recenter source window" "C-c d R" #'my-gdb-recenter-source-window
  :desc "Select & run project dape config" "C-c D A" #'my-dape-config-select-and-run-dape
  :desc "Select & run project gdb config" "C-c D J" #'my-gdb-select-config-and-start
  ;; "C-c D D" is left for site-specific stuff in my-confidential

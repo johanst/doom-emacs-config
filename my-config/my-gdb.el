@@ -187,6 +187,18 @@ Allow manual tweaking and then run `my-gdb-start'."
     (with-selected-window (car gdb-source-window-list)
       (scroll-up-line 1))))
 
+(defun my-gdb-recenter-source-window ()
+  "Move point to current execution line in gdb source window and recenter."
+  (interactive)
+  (when gdb-source-window-list
+    (let ((src-window (car gdb-source-window-list))
+          (arrow (or (bound-and-true-p gdb-arrow)
+                     (bound-and-true-p gud-overlay-arrow-position))))
+      (when (and arrow (marker-buffer arrow))
+        (with-selected-window src-window
+          (switch-to-buffer (marker-buffer arrow))
+          (goto-char (marker-position arrow))
+          (recenter))))))
 
 (map!
  :after gud
