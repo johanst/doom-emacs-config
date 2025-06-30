@@ -173,4 +173,29 @@ Allow manual tweaking and then run `my-gdb-start'."
     )
   )
 
+(defun my-gdb-scroll-down-source-window ()
+  "Scroll down one line in gdb source window."
+  (interactive)
+  (when gdb-source-window-list
+    (with-selected-window (car gdb-source-window-list)
+      (scroll-down-line 1))))
+
+(defun my-gdb-scroll-up-source-window ()
+  "Scroll up one line in gdb source window."
+  (interactive)
+  (when gdb-source-window-list
+    (with-selected-window (car gdb-source-window-list)
+      (scroll-up-line 1))))
+
+
+(map!
+ :after gud
+ :map gud-mode-map
+  :desc "Scroll source up" "C-<up>" #'my-gdb-scroll-up-source-window
+  :desc "Scroll source down" "C-<down>" #'my-gdb-scroll-down-source-window
+
+  ;; when my right hand is busy controlling f9-f12
+  :desc "Scroll source up" "M-v" #'my-gdb-scroll-up-source-window
+  )
+
 (provide 'my-gdb)
