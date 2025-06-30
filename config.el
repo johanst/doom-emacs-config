@@ -195,7 +195,10 @@ whatever debugger was used")
   (setq
    gptel-default-mode 'org-mode
    gptel-model 'gpt-4.1
-   gptel-backend (gptel-make-gh-copilot "Copilot")))
+   gptel-backend (gptel-make-gh-copilot "Copilot")
+   gptel-org-branching-context t
+   )
+  )
 
 (defun my-gptel-use-claude ()
   (interactive)
