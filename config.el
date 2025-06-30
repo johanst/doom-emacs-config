@@ -198,6 +198,8 @@ whatever debugger was used")
    gptel-backend (gptel-make-gh-copilot "Copilot")
    gptel-org-branching-context t
    )
+  (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
+  (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
   )
 
 (defun my-gptel-use-claude ()
