@@ -189,8 +189,6 @@ whatever debugger was used")
   (transient-append-suffix 'magit-pull "-F"
     '("-U" "Unshallow" "--unshallow")))
 
-(use-package! gptel-autocomplete)
-
 (after! gptel
   (setq
    gptel-default-mode 'org-mode
@@ -351,8 +349,6 @@ run `project-compile' with that command selected."
  :desc "gptel chat" "C-c l" #'gptel ;; l is for LLM...
  :desc "gptel menu" "C-c L" #'gptel-menu
  :desc "gptel explain" "C-c e" #'gptel-quick
- :desc "gptel autocomplete request" "C-c a" #'gptel-complete
- :desc "gptel autocomplete accept" "C-c A" #'gptel-accept-completion
  :desc "calc" "C-c *" #'calc ;; Slightly faster than C-x * c
  )
 
