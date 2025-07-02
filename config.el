@@ -200,6 +200,7 @@ whatever debugger was used")
    )
   (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
   (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
+  (add-hook 'gptel-mode-hook (lambda () (make-local-variable 'gptel-context--alist)))
   )
 
 (defun my-gptel-use-claude ()
