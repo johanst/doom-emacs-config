@@ -257,6 +257,34 @@ whatever debugger was used")
     (setq gptel-quick-system-message my-gptel-skånska-quick-system-message))
   )
 
+(defun my-mistral-api-key ()
+  "Return the mistral api-key using `pass show mistral/apikey'"
+  (interactive)
+  (nth 0 (process-lines "pass" "show" "mistral/apikey")))
+
+(use-package! plz)
+(use-package! minuet
+  :defer t
+
+  :bind
+  (("M-y" . #'minuet-complete-with-minibuffer) ;; use minibuffer for completion
+   ("M-i" . #'minuet-show-suggestion) ;; use overlay for completion
+   :map minuet-active-mode-map
+   ;; These keymaps activate only when a minuet suggestion is displayed in the current buffer
+   ("M-p" . #'minuet-previous-suggestion) ;; invoke completion or cycle to next completion
+   ("M-n" . #'minuet-next-suggestion) ;; invoke completion or cycle to previous completion
+   ("M-A" . #'minuet-accept-suggestion) ;; accept whole completion
+   ;; Accept the first line of completion, or N lines with a numeric-prefix:
+   ;; e.g. C-u 2 M-a will accepts 2 lines of completion.
+   ("M-a" . #'minuet-accept-suggestion-line)
+   ("M-e" . #'minuet-dismiss-suggestion))
+
+  :config
+  (setq minuet-provider 'codestral)
+  (plist-put minuet-codestral-options :api-key #'my-mistral-api-key)
+  (plist-put minuet-codestral-options :end-point "https://api.mistral.ai/v1/fim/completions")
+  )
+
 
 (defun johast-treeemacs-toggle()
   "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
