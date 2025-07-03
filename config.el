@@ -89,6 +89,7 @@ whatever debugger was used")
 (require 'my-dape)
 
 (require 'my-compile)
+(require 'my-llm)
 
 (let ((dir (expand-file-name "my-confidential" doom-user-dir)))
   (when (and (file-exists-p dir) (file-directory-p dir))
@@ -188,103 +189,6 @@ whatever debugger was used")
     '("-U" "Unshallow" "--unshallow"))
   (transient-append-suffix 'magit-pull "-F"
     '("-U" "Unshallow" "--unshallow")))
-
-(after! gptel
-  (setq
-   gptel-default-mode 'org-mode
-   gptel-model 'gpt-4.1
-   gptel-backend (gptel-make-gh-copilot "Copilot")
-   gptel-org-branching-context t
-   )
-  (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
-  (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
-  (add-hook 'gptel-mode-hook (lambda () (make-local-variable 'gptel-context--alist)))
-  )
-
-(defun my-gptel-use-claude ()
-  (interactive)
-  (require 'gptel)
-  (setq
-   gptel-model 'claude-3-5-sonnet-20241022
-   gptel-backend
-   (gptel-make-anthropic "Claude"
-     :stream t
-     :key (nth 0 (process-lines "pass" "show" "anthropic/apikey")))))
-
-(defun my-gptel-quick-with-context ()
-  (interactive)
-  (let ((old-context gptel-quick-use-context))
-    (setq gptel-quick-use-context t)
-    (save-excursion
-      (call-interactively #'gptel-quick))
-    (setq gptel-quick-use-context old-context)))
-
-(defvar my-gptel-default-quick-system-message nil
-  "A variable that holds the default system message from gptel.")
-
-(defvar my-gptel-skånska-quick-system-message
-  (lambda (count)
-    (concat (format "Explain in %d words or fewer. " count )
-            "Use swedish colloquial language and spelling with accent skånska. "
-            "Try to use as much skånska as possible without losing clarity."))
-  "A variable that holds the skånska system message from gptel.")
-
-(defvar my-gptel-skånska nil
-  "Whether gptel should talk skånska.")
-
-(defun my-gptel-toggle-skånska ()
-    "Toggle skånska"
-    (interactive)
-    (if my-gptel-skånska
-        (progn
-          (setq my-gptel-skånska nil)
-          (message "Being international now.")
-          (when my-gptel-default-quick-system-message
-            (setq gptel-quick-system-message my-gptel-default-quick-system-message)))
-      (progn
-          (setq my-gptel-skånska t)
-          (message "Förklarar nu på redig skånska.")
-          (when my-gptel-default-quick-system-message
-            (setq gptel-quick-system-message my-gptel-skånska-quick-system-message)))))
-
-(after! gptel-quick
-  (setq
-   gptel-quick-timeout 120 ;; 2 minutes, but why would i ever want a timeout ?
-   gptel-quick-word-count 30 ;; I would rarely want less than 30 words in an explanation
-   my-gptel-default-quick-system-message gptel-quick-system-message
-   )
-  (when my-gptel-skånska
-    (setq gptel-quick-system-message my-gptel-skånska-quick-system-message))
-  )
-
-(defun my-mistral-api-key ()
-  "Return the mistral api-key using `pass show mistral/apikey'"
-  (interactive)
-  (nth 0 (process-lines "pass" "show" "mistral/apikey")))
-
-(use-package! plz)
-(use-package! minuet
-  :defer t
-
-  :bind
-  (("M-y" . #'minuet-complete-with-minibuffer) ;; use minibuffer for completion
-   ("M-i" . #'minuet-show-suggestion) ;; use overlay for completion
-   :map minuet-active-mode-map
-   ;; These keymaps activate only when a minuet suggestion is displayed in the current buffer
-   ("M-p" . #'minuet-previous-suggestion) ;; invoke completion or cycle to next completion
-   ("M-n" . #'minuet-next-suggestion) ;; invoke completion or cycle to previous completion
-   ("M-A" . #'minuet-accept-suggestion) ;; accept whole completion
-   ;; Accept the first line of completion, or N lines with a numeric-prefix:
-   ;; e.g. C-u 2 M-a will accepts 2 lines of completion.
-   ("M-a" . #'minuet-accept-suggestion-line)
-   ("M-e" . #'minuet-dismiss-suggestion))
-
-  :config
-  (setq minuet-provider 'codestral)
-  (plist-put minuet-codestral-options :api-key #'my-mistral-api-key)
-  (plist-put minuet-codestral-options :end-point "https://api.mistral.ai/v1/fim/completions")
-  )
-
 
 (defun johast-treeemacs-toggle()
   "If we're in main workspace just do it the doom way, i.e. add projects/perspectives
