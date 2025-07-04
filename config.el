@@ -34,6 +34,14 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-gruvbox-light)
 
+;; Manipulate the shadow face to make it look different than the default face in
+;; gruvbox-light. minuet uses shadow for the suggestions so it is important to
+;; make the suggestions not visually interfere too much.
+(add-hook 'doom-load-theme-hook
+  (lambda ()
+    (when (eq doom-theme 'doom-gruvbox-light)
+      (set-face-attribute 'shadow nil :foreground "#aa9b8c"))))
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'relative)
