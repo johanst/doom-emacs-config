@@ -9,6 +9,8 @@
 (defvar gptel-quick-use-context)
 (defvar gptel-quick-system-message)
 
+(declare-function minuet-set-optional-options minuet)
+
 (after! gptel
   (setq
    gptel-default-mode 'org-mode
@@ -109,6 +111,8 @@
   (setq minuet-provider 'codestral)
   (plist-put minuet-codestral-options :api-key #'my-mistral-api-key)
   (plist-put minuet-codestral-options :end-point "https://api.mistral.ai/v1/fim/completions")
+  (minuet-set-optional-options minuet-codestral-options :max_tokens 64)
+  (minuet-set-optional-options minuet-codestral-options :temperature 0)
   )
 
 (provide 'my-llm)
