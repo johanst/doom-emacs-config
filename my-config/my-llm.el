@@ -114,7 +114,10 @@ the command `pass show mistral/apikey'."
    ;; Accept the first line of completion, or N lines with a numeric-prefix:
    ;; e.g. C-u 2 M-A will accepts 2 lines of completion.
    ("M-A" . #'minuet-accept-suggestion-line)
-   ("M-e" . #'minuet-dismiss-suggestion))
+   ("M-e" . #'minuet-dismiss-suggestion)
+   ;; HACK: We assume corfu is used as completion UI
+   ("C-M-e" . #'corfu-quit) ;; remove corfu completions if it is hiding the minuet completion suggestion)
+   )
 
   :init
   ;; if you want to enable auto suggestion.
