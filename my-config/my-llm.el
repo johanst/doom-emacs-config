@@ -79,10 +79,24 @@
     (setq gptel-quick-system-message my-gptel-skånska-quick-system-message))
   )
 
-(defun my-mistral-api-key ()
-  "Return the mistral api-key using `pass show mistral/apikey'"
+(defun my-mistral-endpoint-set-default ()
+  "Set the mistral endpoint to the default mistral cloud hosted endpoint.
+Also configure the API-key from `pass show mistral/apikey'."
   (interactive)
-  (nth 0 (process-lines "pass" "show" "mistral/apikey")))
+  (plist-put minuet-codestral-options :end-point "https://api.mistral.ai/v1/fim/completions")
+  (plist-put minuet-codestral-options :model "codestral-latest")
+  (setq my-mistral-api-key (nth 0 (process-lines "pass" "show" "mistral/apikey"))))
+
+(defvar my-mistral-api-key nil
+  "A variable that holds the mistral api-key.")
+(defun my-mistral-api-key ()
+  "Return the mistral api-key from the variable `my-mistral-api-key'.
+If the variable `my-mistral-api-key' is not set, it will be set to the output of
+the command `pass show mistral/apikey'."
+  (interactive)
+  (when (not my-mistral-api-key)
+    (my-mistral-endpoint-set-default))
+  my-mistral-api-key)
 
 (use-package! plz)
 (use-package! minuet
