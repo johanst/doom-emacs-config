@@ -33,13 +33,19 @@
      :stream t
      :key (nth 0 (process-lines "pass" "show" "anthropic/apikey")))))
 
-(defun my-gptel-quick-with-context ()
+(defun my-gptel-quick-toggle-context ()
   (interactive)
+  (setq gptel-quick-use-context (not gptel-quick-use-context))
+  (if gptel-quick-use-context
+      (message "gptel-quick: Enable use of context")
+    (message "gptel-quick: Disable use of context")))
+
+(defun my-gptel-quick-with-context ()
   (let ((old-context gptel-quick-use-context))
     (setq gptel-quick-use-context t)
-    (save-excursion
-      (call-interactively #'gptel-quick))
-    (setq gptel-quick-use-context old-context)))
+    (unwind-protect
+        (call-interactively #'gptel-quick)
+      (setq gptel-quick-use-context old-context))))
 
 (defvar my-gptel-default-quick-system-message nil
   "A variable that holds the default system message from gptel.")
@@ -72,7 +78,7 @@
 (after! gptel-quick
   (setq
    gptel-quick-timeout 120 ;; 2 minutes, but why would i ever want a timeout ?
-   gptel-quick-word-count 30 ;; I would rarely want less than 30 words in an explanation
+   ;; gptel-quick-word-count 30 ;; I would rarely want less than 30 words in an explanation
    my-gptel-default-quick-system-message gptel-quick-system-message
    )
   (when my-gptel-skånska

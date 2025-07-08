@@ -289,6 +289,7 @@ run `project-compile' with that command selected."
  :desc "gptel chat" "C-c l" #'gptel ;; l is for LLM...
  :desc "gptel menu" "C-c L" #'gptel-menu
  :desc "gptel explain" "C-c e" #'gptel-quick
+ :desc "gptel explain (toggle context)" "C-c E" #'my-gptel-quick-toggle-context
  :desc "calc" "C-c *" #'calc ;; Slightly faster than C-x * c
  )
 
