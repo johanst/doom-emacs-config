@@ -11,7 +11,16 @@
 
 (declare-function minuet-set-optional-options minuet)
 
+(use-package! mcp
+  :defer t
+  )
+
 (after! gptel
+  (require 'gptel-integrations) ;; for mcp
+  (setq mcp-hub-servers
+        `(("filesystem" . (:command "npx"
+                           :args
+                           ("-y" "@modelcontextprotocol/server-filesystem" "~/mcp-testing")))))
   (setq
    gptel-default-mode 'org-mode
    gptel-model 'gpt-4.1

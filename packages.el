@@ -58,3 +58,4 @@
 (package! posframe) ;; For gptel-quick
 (package! plz)
 (package! minuet)
+(package! mcp)
