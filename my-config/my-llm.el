@@ -29,18 +29,26 @@
    )
   (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
   (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
-  (add-hook 'gptel-mode-hook (lambda () (make-local-variable 'gptel-context--alist)))
   )
 
+(defvar my-gptel-backend-claude nil)
+
+(defun my-gptel-backend-claude()
+  "Return the GPTel backend for Claude endpoint."
+  (interactive)
+  (or my-gptel-backend-claude
+      (setq my-gptel-backend-claude
+            (gptel-make-anthropic "Claude"
+              :stream t
+              :key (nth 0 (process-lines "pass" "show" "anthropic/apikey"))))))
+
 (defun my-gptel-use-claude ()
+  "Use claude as the backend for gptel."
   (interactive)
   (require 'gptel)
   (setq
    gptel-model 'claude-3-5-sonnet-20241022
-   gptel-backend
-   (gptel-make-anthropic "Claude"
-     :stream t
-     :key (nth 0 (process-lines "pass" "show" "anthropic/apikey")))))
+   gptel-backend (my-gptel-backend-claude)))
 
 (defun my-gptel-quick-toggle-context ()
   (interactive)
