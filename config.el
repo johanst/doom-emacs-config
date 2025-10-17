@@ -282,6 +282,8 @@ run `project-compile' with that command selected."
  :desc "Recompile" "C-c c" #'recompile
  ;; "C-c C C" is left for site-specific stuff in my-confidential
  :desc "Select & run project compile task" "C-c C J" #'my-project-compile
+ :desc "gptel aibo" "C-c i" #'gptel-aibo-summon ;; i is for inline
+ :desc "gptel aibo summon" "C-c I" #'gptel-aibo ;; i is for inline
  :desc "gptel chat" "C-c l" #'gptel ;; l is for LLM...
  :desc "gptel menu" "C-c L" #'gptel-menu
  :desc "gptel explain" "C-c e" #'gptel-quick
