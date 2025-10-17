@@ -118,10 +118,6 @@ whatever debugger was used")
 
 (add-hook 'after-change-major-mode-hook 'my/show-trailing-whitespace-in-text-modes)
 
-(after! cc-mode
-  ;; tree-sitter-mode will provide text objects like loop, function call, etc.
-  (add-hook 'c-mode-common-hook #'tree-sitter-mode))
-
 (after! evil-snipe
   (setq evil-snipe-scope 'visible))
 
@@ -332,8 +328,8 @@ Used in `repeat-mode'."
        "C-c C-p"           #'+pass/consult))
 
 (map!
- :after cc-mode
- :map (c-mode-map c++-mode-map)
+ :after (cc-mode c-ts-mode)
+ :map (c-mode-map c++-mode-map c-ts-mode-map c++-ts-mode-map)
  (:prefix "C-c"
   :desc "Find other file" "o" #'projectile-find-other-file))
 
