@@ -11,22 +11,39 @@
 
 (declare-function minuet-set-optional-options minuet)
 
-(use-package! mcp
-  :defer t
-  )
+(defvar my-gptel-backend-copilot nil)
+
+(defun my-gptel-backend-copilot()
+  "Return the GPTel backend for Copilot endpoint."
+  (interactive)
+  (or my-gptel-backend-copilot
+      (setq my-gptel-backend-copilot (gptel-make-gh-copilot "Copilot"))))
+
+(defun my-gptel-use-copilot ()
+  "Use copilot as the backend for gptel."
+  (interactive)
+  (require 'gptel)
+  (setq
+   gptel-model 'gpt-4.1
+   gptel-backend (my-gptel-backend-copilot)))
 
 (after! gptel
   (require 'gptel-integrations) ;; for mcp
+  (use-package! mcp
+    ;; Don't defer as then tools are not available from gptel until we explicitly call
+    ;; something from mcp.
+    ;;
+    ;;:defer t
+    )
   (setq mcp-hub-servers
         `(("filesystem" . (:command "npx"
                            :args
                            ("-y" "@modelcontextprotocol/server-filesystem" "~/mcp-testing")))))
   (setq
    gptel-default-mode 'org-mode
-   gptel-model 'gpt-4.1
-   gptel-backend (gptel-make-gh-copilot "Copilot")
    gptel-org-branching-context t
    )
+  (my-gptel-use-copilot)
   (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
   (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
   )
@@ -154,5 +171,8 @@ the command `pass show mistral/apikey'."
   (minuet-set-optional-options minuet-codestral-options :max_tokens 64)
   (minuet-set-optional-options minuet-codestral-options :temperature 0)
   )
+
+(use-package! gptel-aibo
+  :after (gptel flycheck))
 
 (provide 'my-llm)
