@@ -89,7 +89,7 @@ done it ourselves using `my-gdbserver-command'."
   (interactive)
   (setq my-last-debug-command #'my-gdb-start)
   (global-set-key (kbd "<f9>") #'gud-break)
-  (global-set-key (kbd "S-<f9>") #'gud-clear)
+  (global-set-key (kbd "S-<f9>") #'gud-remove)
   (global-set-key (kbd "C-<f9>") #'gud-tbreak)
   (global-set-key (kbd "<f10>") #'gud-next)
   (global-set-key (kbd "C-<f10>") #'gud-until)
