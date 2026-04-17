@@ -135,6 +135,15 @@ whatever debugger was used")
   (setq aw-scope 'frame
         aw-background t))
 
+(use-package! plantuml-mode
+  :mode ("\\.puml\\'" "\\.plantuml\\'")
+  :config
+  (setq plantuml-default-exec-mode 'executable)
+  (setq plantuml-output-type "svg"))
+
+(after! plantuml-mode
+  (add-hook 'plantuml-mode-hook (lambda () (setq-local completion-at-point-functions nil))))
+
 (after! apheleia
   ;; Use shfmt as default formatter for sh-mode as well (apheleia only defines bash-ts-mode)
   (setq apheleia-mode-alist

@@ -60,3 +60,4 @@
 (package! minuet)
 (package! mcp)
 (package! gptel-aibo)
+;; (package! plantuml-mode)
