@@ -344,6 +344,16 @@ Used in `repeat-mode'."
  (:prefix "C-c"
   :desc "Find other file" "o" #'projectile-find-other-file))
 
+(defun my/zig-build-run ()
+  (interactive)
+  (async-shell-command "zig build run" "*zig-build-run*"))
+
+(map!
+ :after (zig-mode)
+ :map (zig-mode-map)
+ (:prefix "C-c"
+  :desc "Find other file" "C-c" #'my/zig-build-run))
+
 (map!
  :after view
  :map view-mode-map
